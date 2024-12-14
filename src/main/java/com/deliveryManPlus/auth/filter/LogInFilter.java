@@ -1,20 +1,21 @@
 package com.deliveryManPlus.auth.filter;
 
 import com.deliveryManPlus.auth.constant.SessionConst;
+import com.deliveryManPlus.auth.constant.UrlConst;
+import com.deliveryManPlus.exception.constant.SessionErrorCode;
+import com.deliveryManPlus.exception.exception.ApiException;
+import com.deliveryManPlus.exception.model.dto.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.PatternMatchUtils;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
 public class LogInFilter implements Filter {
 
-    //로그인 필터 화이트 리스트
-    private static final String[] WHITE_LIST = {"/", "/auth/signup", "/auth/login"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -24,16 +25,16 @@ public class LogInFilter implements Filter {
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-//        try{
+        try{
             if (!isWhiteList(requestURI)) {
                 HttpSession session = httpRequest.getSession(false);
 
                 if (session == null || session.getAttribute(SessionConst.SESSION_KEY) == null) {
-                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+                    throw new ApiException(SessionErrorCode.NO_SESSION);
                 }
             }
             chain.doFilter(request, response);
-        /*}catch (ApiException e){
+        }catch(ApiException e){//todo 리팩터링 하기
             httpResponse.setStatus(e.getErrorCode().getHttpStatus().value());
             httpResponse.setContentType("application/json;charset=UTF-8");
 
@@ -46,12 +47,12 @@ public class LogInFilter implements Filter {
             String jsonResponse = objectMapper.writeValueAsString(errorResponse);
 
             httpResponse.getWriter().write(jsonResponse);
-        }*/
+        }
 
     }
 
     //화이트 리스트 검증 메서드
     private boolean isWhiteList(String requestURI) {
-        return PatternMatchUtils.simpleMatch(WHITE_LIST, requestURI);
+        return PatternMatchUtils.simpleMatch(UrlConst.WHITE_LIST, requestURI);
     }
 }

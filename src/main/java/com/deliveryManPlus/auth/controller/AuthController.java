@@ -1,7 +1,11 @@
 package com.deliveryManPlus.auth.controller;
 
+import com.deliveryManPlus.auth.model.dto.Authentication;
+import com.deliveryManPlus.auth.model.dto.LoginRequestDto;
 import com.deliveryManPlus.auth.model.dto.SigninRequestDto;
 import com.deliveryManPlus.auth.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +29,16 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Void>
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequestDto dto, HttpServletRequest request){
+        Authentication authentication = authService.login(dto);
+
+        //session 생성
+        HttpSession session = request.getSession(true);
+
+        //session에 값 담음
+        session.setAttribute("auth",authentication);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

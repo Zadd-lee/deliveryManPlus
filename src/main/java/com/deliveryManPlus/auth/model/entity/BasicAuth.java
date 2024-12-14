@@ -3,8 +3,10 @@ package com.deliveryManPlus.auth.model.entity;
 import com.deliveryManPlus.model.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.user.model.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class BasicAuth extends CreateAndUpdateDateEntity {

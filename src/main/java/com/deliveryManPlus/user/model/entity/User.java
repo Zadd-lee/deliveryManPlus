@@ -4,10 +4,12 @@ import com.deliveryManPlus.model.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.user.constant.Role;
 import com.deliveryManPlus.user.constant.Status;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class User extends CreateAndUpdateDateEntity {

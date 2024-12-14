@@ -1,5 +1,6 @@
 package com.deliveryManPlus.user.model.entity;
 
+import com.deliveryManPlus.auth.model.entity.BasicAuth;
 import com.deliveryManPlus.model.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.user.constant.Role;
 import com.deliveryManPlus.user.constant.Status;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Entity
@@ -25,6 +27,9 @@ public class User extends CreateAndUpdateDateEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    List<BasicAuth> basicAuthList;
 
     public User(String nickname, LocalDate birthday, Role role) {
         this.nickname = nickname;

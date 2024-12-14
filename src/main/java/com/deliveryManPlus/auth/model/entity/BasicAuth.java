@@ -22,7 +22,7 @@ public class BasicAuth extends CreateAndUpdateDateEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public BasicAuth(String email, String password) {
+    public BasicAuth(String email,String password) {
         this.email = email;
         this.password = password;
     }

@@ -2,6 +2,7 @@ package com.deliveryManPlus.auth.model.dto;
 
 
 import com.deliveryManPlus.auth.model.entity.BasicAuth;
+import com.deliveryManPlus.auth.utils.PasswordEncoder;
 import com.deliveryManPlus.user.constant.Role;
 import com.deliveryManPlus.user.model.entity.User;
 import jakarta.validation.constraints.AssertTrue;
@@ -29,7 +30,7 @@ public class SigninRequestDto {
     private String password;
 
     public BasicAuth toBasicAuthEntity() {
-        return new BasicAuth(email, password);
+        return new BasicAuth(this.email, PasswordEncoder.encode(this.password));
     }
 
     public User toUserEntity() {

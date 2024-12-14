@@ -32,4 +32,8 @@ public class User extends CreateAndUpdateDateEntity {
         this.role = role;
         this.status = Status.USE;
     }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

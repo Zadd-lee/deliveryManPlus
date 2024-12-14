@@ -1,6 +1,8 @@
 package com.deliveryManPlus.auth.controller;
 
+import com.deliveryManPlus.auth.constant.SessionConst;
 import com.deliveryManPlus.auth.model.dto.Authentication;
+import com.deliveryManPlus.auth.model.dto.LeaveRequestDto;
 import com.deliveryManPlus.auth.model.dto.LoginRequestDto;
 import com.deliveryManPlus.auth.model.dto.SigninRequestDto;
 import com.deliveryManPlus.auth.service.AuthService;
@@ -10,10 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,29 +23,37 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<Void> signin(@Valid @RequestBody SigninRequestDto dto){
+    public ResponseEntity<Void> signin(@Valid @RequestBody SigninRequestDto dto) {
         authService.signin(dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequestDto dto, HttpServletRequest request){
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequestDto dto, HttpServletRequest request) {
         Authentication authentication = authService.login(dto);
 
         //session 생성
         HttpSession session = request.getSession(true);
 
         //session에 값 담음
-        session.setAttribute("auth",authentication);
+        session.setAttribute( SessionConst.SESSION_KEY,authentication);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request){
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
         //만료
         request.getSession().invalidate();
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/leave")
+    public ResponseEntity<Void> leave(@Valid @RequestBody LeaveRequestDto dto,
+                                      @SessionAttribute(name = SessionConst.SESSION_KEY) Authentication authentication) {
+        authService.leave(dto,authentication);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
 }

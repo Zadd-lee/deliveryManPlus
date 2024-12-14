@@ -1,4 +1,4 @@
-package com.deliveryManPlus.model.entity;
+package com.deliveryManPlus.common.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

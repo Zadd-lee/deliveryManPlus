@@ -1,4 +1,4 @@
-package com.deliveryManPlus.exception.constant;
+package com.deliveryManPlus.common.exception.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

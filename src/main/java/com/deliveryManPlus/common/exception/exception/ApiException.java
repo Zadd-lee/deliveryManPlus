@@ -1,6 +1,6 @@
-package com.deliveryManPlus.exception.exception;
+package com.deliveryManPlus.common.exception.exception;
 
-import com.deliveryManPlus.exception.constant.ErrorCode;
+import com.deliveryManPlus.common.exception.constant.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

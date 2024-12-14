@@ -1,6 +1,6 @@
 package com.deliveryManPlus.auth.model.entity;
 
-import com.deliveryManPlus.model.entity.CreateAndUpdateDateEntity;
+import com.deliveryManPlus.common.model.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.user.model.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;

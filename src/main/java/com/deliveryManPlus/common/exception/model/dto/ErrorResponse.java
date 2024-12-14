@@ -1,4 +1,4 @@
-package com.deliveryManPlus.exception.model.dto;
+package com.deliveryManPlus.common.exception.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

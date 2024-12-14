@@ -1,9 +1,9 @@
-package com.deliveryManPlus.exception.exception;
+package com.deliveryManPlus.common.exception.exception;
 
 
-import com.deliveryManPlus.exception.constant.CommonErrorCode;
-import com.deliveryManPlus.exception.constant.ErrorCode;
-import com.deliveryManPlus.exception.model.dto.ErrorResponse;
+import com.deliveryManPlus.common.exception.constant.CommonErrorCode;
+import com.deliveryManPlus.common.exception.constant.ErrorCode;
+import com.deliveryManPlus.common.exception.model.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

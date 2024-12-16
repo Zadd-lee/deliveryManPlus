@@ -4,6 +4,7 @@ import com.deliveryManPlus.auth.model.dto.Authentication;
 import com.deliveryManPlus.common.exception.constant.SessionErrorCode;
 import com.deliveryManPlus.common.exception.exception.ApiException;
 import com.deliveryManPlus.shop.model.dto.CreateRequestDto;
+import com.deliveryManPlus.shop.model.dto.ShopResponseDto;
 import com.deliveryManPlus.shop.model.entity.Shop;
 import com.deliveryManPlus.shop.repository.ShopRepository;
 import com.deliveryManPlus.shop.service.ShopService;
@@ -11,6 +12,8 @@ import com.deliveryManPlus.user.model.entity.User;
 import com.deliveryManPlus.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +31,16 @@ public class ShopServiceImpl implements ShopService {
         shop.updateOwner(user);
 
         shopRepository.save(shop);
+    }
+
+    @Override
+    public List<ShopResponseDto> findAll() {
+        List<Shop> shopList = shopRepository.findAllNotClosedDown();
+
+        return shopList.stream()
+                .map(x -> new ShopResponseDto(x))
+                .toList();
+
+
     }
 }

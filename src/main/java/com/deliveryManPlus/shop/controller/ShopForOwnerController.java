@@ -20,6 +20,6 @@ public class ShopForOwnerController {
                                        @Valid @RequestBody CreateRequestDto dto){
         shopService.create(auth,dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
-
     }
+
 }

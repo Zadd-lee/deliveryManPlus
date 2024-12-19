@@ -2,7 +2,9 @@ package com.deliveryManPlus.shop.service.imp;
 
 import com.deliveryManPlus.auth.model.dto.Authentication;
 import com.deliveryManPlus.common.exception.constant.SessionErrorCode;
+import com.deliveryManPlus.common.exception.constant.ShopErrorCode;
 import com.deliveryManPlus.common.exception.exception.ApiException;
+import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.model.dto.CreateRequestDto;
 import com.deliveryManPlus.shop.model.dto.ShopResponseDto;
 import com.deliveryManPlus.shop.model.entity.Shop;
@@ -41,6 +43,18 @@ public class ShopServiceImpl implements ShopService {
                 .map(x -> new ShopResponseDto(x))
                 .toList();
 
+
+    }
+
+    @Override
+    public ShopResponseDto findById(Long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUNT));
+
+        if(shop.getStatus() == ShopStatus.CLOSED_DOWN){
+            throw new ApiException(ShopErrorCode.NOT_VALUABLE);
+        }
+        return new ShopResponseDto(shop);
 
     }
 }

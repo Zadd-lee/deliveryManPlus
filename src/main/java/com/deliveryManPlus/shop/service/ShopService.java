@@ -11,4 +11,6 @@ public interface ShopService {
     void create(Authentication auth, @Valid CreateRequestDto dto);
 
     List<ShopResponseDto> findAll();
+
+    ShopResponseDto findById(Long shopId);
 }

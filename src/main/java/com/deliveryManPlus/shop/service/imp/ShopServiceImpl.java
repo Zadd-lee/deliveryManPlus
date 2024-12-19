@@ -33,6 +33,7 @@ public class ShopServiceImpl implements ShopService {
         User user = userRepository.findById(auth.getId())
                 .orElseThrow(() -> new ApiException(SessionErrorCode.NOT_ALLOWED));
 
+        //todo bug 발견 / 존재 해도 폐업 에러 출력
         if (shopRepository.existsShopByRegistNumber(dto.getRegistNumber())) {
             throw new ApiException(ShopErrorCode.NOT_VALUABLE);
         }

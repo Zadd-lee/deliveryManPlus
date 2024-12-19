@@ -32,7 +32,6 @@ public class authServiceImp implements AuthService {
         //검증
         Optional<BasicAuth> byEmail = authRepository.findByEmail(dto.getEmail());
         if(byEmail.isPresent()){
-            //todo 에러 처리
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
 

@@ -65,4 +65,8 @@ public class Shop extends CreateAndUpdateDateEntity {
         this.closedDay = StringUtils.toStringWithComma(dto.getClosedDay());
         this.minimumOrderAmount = dto.getMinimumOrderAmount();
     }
+
+    public void updateStatus(ShopStatus status) {
+        this.status = status;
+    }
 }

@@ -1,6 +1,7 @@
 package com.deliveryManPlus.shop.service;
 
 import com.deliveryManPlus.auth.model.dto.Authentication;
+import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.model.dto.CreateRequestDto;
 import com.deliveryManPlus.shop.model.dto.ShopDetailResponseDto;
 import com.deliveryManPlus.shop.model.dto.ShopResponseDto;
@@ -17,4 +18,6 @@ public interface ShopService {
     ShopResponseDto findById(Long shopId);
 
     ShopDetailResponseDto updateShop(Long shopId, Authentication auth, UpdateRequestDto dto);
+
+    ShopDetailResponseDto updateShopStatus(Long shopId, Authentication auth, @Valid ShopStatus status);
 }

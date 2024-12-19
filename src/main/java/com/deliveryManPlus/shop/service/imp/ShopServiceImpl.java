@@ -53,7 +53,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public ShopResponseDto findById(Long shopId) {
         Shop shop = shopRepository.findById(shopId)
-                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUNT));
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
         if(shop.getStatus() == ShopStatus.CLOSED_DOWN){
             throw new ApiException(ShopErrorCode.NOT_VALUABLE);
@@ -68,12 +68,30 @@ public class ShopServiceImpl implements ShopService {
         User user = userRepository.findById(auth.getId())
                 .orElseThrow(() -> new ApiException(SessionErrorCode.NOT_ALLOWED));
         Shop shop = shopRepository.findById(shopId)
-                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUNT));
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
         if(!shop.getOwner().equals(user)){
             throw new ApiException(SessionErrorCode.NOT_ALLOWED);
         }
         shop.updateByDto(dto);
+        return new ShopDetailResponseDto(shop);
+    }
+
+    @Override
+    public ShopDetailResponseDto updateShopStatus(Long shopId, Authentication auth, ShopStatus status) {
+        //검증
+        User user = userRepository.findById(auth.getId())
+                .orElseThrow(() -> new ApiException(SessionErrorCode.NOT_ALLOWED));
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+
+        if(!shop.getOwner().equals(user)){
+            throw new ApiException(SessionErrorCode.NOT_ALLOWED);
+        }
+        if (shop.getStatus() == ShopStatus.CLOSED_DOWN) {
+            throw new ApiException(ShopErrorCode.NOT_FOUND);
+        }
+        shop.updateStatus(status);
         return new ShopDetailResponseDto(shop);
     }
 }

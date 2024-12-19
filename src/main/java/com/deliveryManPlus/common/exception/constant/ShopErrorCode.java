@@ -4,14 +4,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
-@Getter
 @RequiredArgsConstructor
-public enum SessionErrorCode implements ErrorCode{
-    NO_SESSION(HttpStatus.UNAUTHORIZED, "세션이 없습니다"),
-    NOT_ALLOWED(HttpStatus.BAD_REQUEST,"잘못된 접근입니다."),
-    ;
+@Getter
+public enum ShopErrorCode implements ErrorCode{
+    NOT_FOUND(HttpStatus.NOT_FOUND,"가게를 찾을 수 없습니다"),
+    NOT_VALUABLE(HttpStatus.BAD_REQUEST, "폐업한 가게입니다"),;
+
 
     private final HttpStatus httpStatus;
     private final String message;
-
 }

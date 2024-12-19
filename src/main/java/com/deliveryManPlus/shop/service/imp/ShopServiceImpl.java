@@ -94,4 +94,21 @@ public class ShopServiceImpl implements ShopService {
         shop.updateStatus(status);
         return new ShopDetailResponseDto(shop);
     }
+
+    @Override
+    public void deleteShop(Long shopId, Authentication auth) {
+        //검증
+        User user = userRepository.findById(auth.getId())
+                .orElseThrow(() -> new ApiException(SessionErrorCode.NOT_ALLOWED));
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+
+        if(!shop.getOwner().equals(user)){
+            throw new ApiException(SessionErrorCode.NOT_ALLOWED);
+        }
+        if (shop.getStatus() == ShopStatus.CLOSED_DOWN) {
+            throw new ApiException(ShopErrorCode.NOT_FOUND);
+        }
+        shop.updateStatus(ShopStatus.CLOSED_DOWN);
+    }
 }

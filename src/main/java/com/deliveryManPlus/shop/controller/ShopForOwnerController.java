@@ -42,5 +42,11 @@ public class ShopForOwnerController {
         ShopDetailResponseDto dto = shopService.updateShopStatus(shopId, auth, status.getStatus());
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
+    @DeleteMapping("/{shopId}")
+    public ResponseEntity<Void> delete(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
+                                                              @PathVariable Long shopId) {
+        shopService.deleteShop(shopId, auth);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

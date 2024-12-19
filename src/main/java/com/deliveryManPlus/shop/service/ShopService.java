@@ -20,4 +20,7 @@ public interface ShopService {
     ShopDetailResponseDto updateShop(Long shopId, Authentication auth, UpdateRequestDto dto);
 
     ShopDetailResponseDto updateShopStatus(Long shopId, Authentication auth, @Valid ShopStatus status);
+
+    void deleteShop(Long shopId, Authentication auth);
+
 }

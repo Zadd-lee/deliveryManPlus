@@ -11,4 +11,6 @@ import java.util.List;
 public interface ShopRepository extends JpaRepository<Shop,Long> {
     @Query("select s from Shop s where s.status!='CLOSED_DOWN'")
     List<Shop> findAllNotClosedDown();
+
+    boolean existsShopByRegistNumber(String registNumber);
 }

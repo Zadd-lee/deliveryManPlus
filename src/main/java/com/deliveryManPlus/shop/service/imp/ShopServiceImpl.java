@@ -33,6 +33,9 @@ public class ShopServiceImpl implements ShopService {
         User user = userRepository.findById(auth.getId())
                 .orElseThrow(() -> new ApiException(SessionErrorCode.NOT_ALLOWED));
 
+        if (shopRepository.existsShopByRegistNumber(dto.getRegistNumber())) {
+            throw new ApiException(ShopErrorCode.NOT_VALUABLE);
+        }
         Shop shop = dto.toEntity();
         shop.updateOwner(user);
 

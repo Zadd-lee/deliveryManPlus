@@ -2,6 +2,7 @@ package com.deliveryManPlus.menu.model.entity;
 
 import com.deliveryManPlus.common.model.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.menu.constant.MenuStatus;
+import com.deliveryManPlus.menu.model.dto.MenuUpdateRequestDto;
 import com.deliveryManPlus.shop.model.entity.Shop;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,4 +37,10 @@ public class Menu extends CreateAndUpdateDateEntity {
     }
 
 
+    public void updateByDto(MenuUpdateRequestDto dto) {
+        this.name = dto.getName();
+        this.context = dto.getContext();
+        this.price = dto.getPrice();
+
+    }
 }

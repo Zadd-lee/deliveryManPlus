@@ -3,6 +3,7 @@ package com.deliveryManPlus.menu.controller;
 import com.deliveryManPlus.auth.constant.SessionConst;
 import com.deliveryManPlus.auth.model.dto.Authentication;
 import com.deliveryManPlus.menu.model.dto.MenuCreateRequestDto;
+import com.deliveryManPlus.menu.model.dto.MenuUpdateRequestDto;
 import com.deliveryManPlus.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,15 @@ public class MenuController {
                                        @PathVariable Long shopId,
                                        @Valid @RequestBody MenuCreateRequestDto dto) {
         menuService.create(auth, shopId,dto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
+    @PutMapping("/{menuId}")
+    public ResponseEntity<Void> update(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
+                                       @PathVariable Long shopId,
+                                       @PathVariable Long menuId,
+                                       @Valid @RequestBody MenuUpdateRequestDto dto) {
+        menuService.update(auth, shopId, menuId, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

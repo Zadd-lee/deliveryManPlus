@@ -25,6 +25,7 @@ public class Menu extends CreateAndUpdateDateEntity {
     private String name;
     private String context;
     private BigDecimal price;
+    @Enumerated(EnumType.STRING)
     private MenuStatus status;
 
     @ManyToOne

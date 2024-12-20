@@ -7,6 +7,7 @@ import com.deliveryManPlus.common.exception.constant.ShopErrorCode;
 import com.deliveryManPlus.common.exception.exception.ApiException;
 import com.deliveryManPlus.menu.model.dto.MenuCreateRequestDto;
 import com.deliveryManPlus.menu.model.dto.MenuUpdateRequestDto;
+import com.deliveryManPlus.menu.model.dto.MenuUpdateStatusRequestDto;
 import com.deliveryManPlus.menu.model.entity.Menu;
 import com.deliveryManPlus.menu.repository.MenuRepository;
 import com.deliveryManPlus.menu.service.MenuService;
@@ -55,15 +56,32 @@ public class MenuServiceImp implements MenuService {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
 
-            validateShopAndMenu(menu, shop);
+        validateShopAndMenu(menu, shop);
         validateShopAndUser(shop, user);
 
         menu.updateByDto(dto);
 
     }
 
+    @Override
+    public void updateStatus(Authentication auth, Long shopId, Long menuId, MenuUpdateStatusRequestDto dto) {
+        //검증
+        User user = userRepository.findById(auth.getId())
+                .orElseThrow(() -> new ApiException(SessionErrorCode.NOT_ALLOWED));
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+
+        validateShopAndMenu(menu, shop);
+        validateShopAndUser(shop, user);
+
+        menu.updateStatus(dto.getStatus());
+    }
+
     private static void validateShopAndMenu(Menu menu, Shop shop) {
-        if(!menu.getShop().equals(shop)) {
+        if (!menu.getShop().equals(shop)) {
             throw new ApiException(MenuErrorCode.NOT_FOUND);
         }
     }

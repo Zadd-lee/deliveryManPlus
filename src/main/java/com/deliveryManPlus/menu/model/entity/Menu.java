@@ -19,12 +19,13 @@ import java.math.BigDecimal;
 @Builder
 public class Menu extends CreateAndUpdateDateEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String context;
     private BigDecimal price;
+
     @Enumerated(EnumType.STRING)
     private MenuStatus status;
 
@@ -43,5 +44,9 @@ public class Menu extends CreateAndUpdateDateEntity {
         this.context = dto.getContext();
         this.price = dto.getPrice();
 
+    }
+
+    public void updateStatus(MenuStatus status) {
+        this.status = status;
     }
 }

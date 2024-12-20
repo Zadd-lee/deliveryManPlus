@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class User extends CreateAndUpdateDateEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nickname;

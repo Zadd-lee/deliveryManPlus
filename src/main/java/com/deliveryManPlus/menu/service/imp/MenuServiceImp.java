@@ -5,6 +5,7 @@ import com.deliveryManPlus.common.exception.constant.MenuErrorCode;
 import com.deliveryManPlus.common.exception.constant.SessionErrorCode;
 import com.deliveryManPlus.common.exception.constant.ShopErrorCode;
 import com.deliveryManPlus.common.exception.exception.ApiException;
+import com.deliveryManPlus.menu.constant.MenuStatus;
 import com.deliveryManPlus.menu.model.dto.MenuCreateRequestDto;
 import com.deliveryManPlus.menu.model.dto.MenuUpdateRequestDto;
 import com.deliveryManPlus.menu.model.dto.MenuUpdateStatusRequestDto;
@@ -78,6 +79,23 @@ public class MenuServiceImp implements MenuService {
         validateShopAndUser(shop, user);
 
         menu.updateStatus(dto.getStatus());
+    }
+
+    @Override
+    public void delete(Authentication auth, Long shopId, Long menuId) {
+        //검증
+        User user = userRepository.findById(auth.getId())
+                .orElseThrow(() -> new ApiException(SessionErrorCode.NOT_ALLOWED));
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+
+        validateShopAndMenu(menu, shop);
+        validateShopAndUser(shop, user);
+
+        menu.updateStatus(MenuStatus.NOT_USE);
     }
 
     private static void validateShopAndMenu(Menu menu, Shop shop) {

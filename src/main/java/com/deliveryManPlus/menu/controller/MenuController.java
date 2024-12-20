@@ -43,4 +43,11 @@ public class MenuController {
         menuService.updateStatus(auth, shopId, menuId, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<Void> delete(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
+                                       @PathVariable Long shopId,
+                                       @PathVariable Long menuId) {
+        menuService.delete(auth, shopId, menuId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

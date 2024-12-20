@@ -12,4 +12,6 @@ public interface MenuService {
     void update(Authentication auth, Long shopId, Long menuId, @Valid MenuUpdateRequestDto dto);
 
     void updateStatus(Authentication auth, Long shopId, Long menuId, MenuUpdateStatusRequestDto dto);
+
+    void delete(Authentication auth, Long shopId, Long menuId);
 }

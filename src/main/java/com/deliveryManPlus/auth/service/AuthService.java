@@ -12,5 +12,5 @@ public interface AuthService {
 
     Authentication login(@Valid LoginRequestDto dto);
 
-    void leave(LeaveRequestDto dto, Authentication authentication);
+    void leave(LeaveRequestDto dto, Long authentication);
 }

@@ -22,7 +22,7 @@ public class MenuController {
     public ResponseEntity<Void> create(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
                                        @PathVariable Long shopId,
                                        @Valid @RequestBody MenuCreateRequestDto dto) {
-        menuService.create(auth, shopId,dto);
+        menuService.create(auth.getId(), shopId,dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -31,7 +31,7 @@ public class MenuController {
                                        @PathVariable Long shopId,
                                        @PathVariable Long menuId,
                                        @Valid @RequestBody MenuUpdateRequestDto dto) {
-        menuService.update(auth, shopId, menuId, dto);
+        menuService.update(auth.getId(), shopId, menuId, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -40,14 +40,14 @@ public class MenuController {
                                        @PathVariable Long shopId,
                                        @PathVariable Long menuId,
                                        @Valid @RequestBody MenuUpdateStatusRequestDto dto) {
-        menuService.updateStatus(auth, shopId, menuId, dto);
+        menuService.updateStatus(auth.getId(), shopId, menuId, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{menuId}")
     public ResponseEntity<Void> delete(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
                                        @PathVariable Long shopId,
                                        @PathVariable Long menuId) {
-        menuService.delete(auth, shopId, menuId);
+        menuService.delete(auth.getId(), shopId, menuId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

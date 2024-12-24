@@ -1,16 +1,24 @@
 package com.deliveryManPlus.auth.config;
 
-import com.deliveryManPlus.auth.filter.LogInFilter;
+import com.deliveryManPlus.auth.filter.*;
 import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import static com.deliveryManPlus.auth.constant.UrlConst.*;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+    private final SessionValidationInterceptor sessionValidationInterceptor;
+    private final AdminAuthInterceptor adminAuthInterceptor;
+    private final OwnerAuthInterceptor ownerAuthInterceptor;
+    private final CustomerAuthInterceptor customerAuthInterceptor;
+
     /**
      * 로그인 필터 등록
      *
@@ -33,20 +41,26 @@ public class WebConfig implements WebMvcConfigurer {
      * @param registry
      */
 
-/*
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
+        registry.addInterceptor(sessionValidationInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(WHITE_LIST)
+                .order(1);
+
         registry.addInterceptor(adminAuthInterceptor)
-                .addPathPatterns(ADMIN_AUTH_REQUIRED_PATH_PATTERNS)
+                .addPathPatterns(ADMIN_INTERCEPTOR_LIST)
                 .order(2);
 
-        registry.addInterceptor(userAuthInterceptor)
-                .addPathPatterns(USER_AUTH_REQUIRED_PATH_PATTERNS)
+        registry.addInterceptor(ownerAuthInterceptor)
+                .addPathPatterns(OWNER_INTERCEPTOR_LIST)
                 .order(3);
 
-        registry.addInterceptor(ownerAuthInterceptor)
-                .addPathPatterns(OWNER_AUTH_REQUIRED_PATH_PATTERNS)
+        registry.addInterceptor(customerAuthInterceptor)
+                .addPathPatterns(CUSTOMER_INTERCEPTOR_LIST)
                 .order(4);
-}*/
+
+}
 
 }

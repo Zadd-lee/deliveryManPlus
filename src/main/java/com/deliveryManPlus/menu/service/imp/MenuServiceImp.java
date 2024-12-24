@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.deliveryManPlus.common.utils.EntityValidator.isValid;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -89,13 +91,13 @@ public class MenuServiceImp implements MenuService {
     }
 
     private static void validateShopAndMenu(Menu menu, Shop shop) {
-        if (!menu.getShop().equals(shop)) {
+        if (isValid(shop.getId(), menu)) {
             throw new ApiException(MenuErrorCode.NOT_FOUND);
         }
     }
 
     private static void validateShopAndUser(Shop shop, Long userId) {
-        if (shop.getOwner().getId()!=userId) {
+        if (isValid(userId, shop)) {
             throw new ApiException(MenuErrorCode.UNAUTHORIZED);
         }
     }

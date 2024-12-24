@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.deliveryManPlus.common.utils.EntityValidator.isValid;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -31,10 +33,10 @@ public class ShopServiceImpl implements ShopService {
         //검증
         User user = userRepository.findById(userId).get();
 
-        //todo bug 발견 / 존재 해도 폐업 에러 출력
-        if (shopRepository.existsShopByRegistNumber(dto.getRegistNumber())) {
+        if (shopRepository.findByRegistNumber(dto.getRegistNumber()).isPresent()) {
             throw new ApiException(ShopErrorCode.NOT_VALUABLE);
         }
+        
         Shop shop = dto.toEntity();
         shop.updateOwner(user);
 
@@ -57,9 +59,8 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
-        if (shop.getStatus() == ShopStatus.CLOSED_DOWN) {
-            throw new ApiException(ShopErrorCode.NOT_VALUABLE);
-        }
+        validateShopStatus(shop);
+
         return new ShopDetailResponseDto(shop, shop.getMenuList());
 
     }
@@ -70,13 +71,13 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
+        validateUserAndShop(userId, shop);
 
-        if (shop.getOwner().getId()!=userId) {
-            throw new ApiException(SessionErrorCode.NOT_ALLOWED);
-        }
+
         shop.updateByDto(dto);
         return new ShopDetailResponseDto(shop, shop.getMenuList());
     }
+
 
     @Override
     public ShopDetailResponseDto updateShopStatus(Long shopId, Long userId, ShopStatus status) {
@@ -84,12 +85,9 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
-        if (shop.getOwner().getId() !=userId) {
-            throw new ApiException(SessionErrorCode.NOT_ALLOWED);
-        }
-        if (shop.getStatus() == ShopStatus.CLOSED_DOWN) {
-            throw new ApiException(ShopErrorCode.NOT_FOUND);
-        }
+        validateUserAndShop(userId, shop);
+        validateShopStatus(shop);
+
         shop.updateStatus(status);
         return new ShopDetailResponseDto(shop, shop.getMenuList());
     }
@@ -100,12 +98,25 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
-        if (shop.getOwner().getId() != userId) {
+        validateUserAndShop(userId, shop);
+        validateShopStatus(shop);
+
+        shop.updateStatus(ShopStatus.CLOSED_DOWN);
+    }
+
+
+    //userId와 shop의 owner가 같은지 확인
+
+    private static void validateUserAndShop(Long userId, Shop shop) {
+        if (isValid(userId, shop)) {
             throw new ApiException(SessionErrorCode.NOT_ALLOWED);
         }
+    }
+
+    //shop의 status가 폐업이 아닌지 확인
+    private static void validateShopStatus(Shop shop) {
         if (shop.getStatus() == ShopStatus.CLOSED_DOWN) {
-            throw new ApiException(ShopErrorCode.NOT_FOUND);
+            throw new ApiException(ShopErrorCode.NOT_VALUABLE);
         }
-        shop.updateStatus(ShopStatus.CLOSED_DOWN);
     }
 }

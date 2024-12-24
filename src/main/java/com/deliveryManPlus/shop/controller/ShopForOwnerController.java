@@ -2,6 +2,7 @@ package com.deliveryManPlus.shop.controller;
 
 import com.deliveryManPlus.auth.constant.SessionConst;
 import com.deliveryManPlus.auth.model.dto.Authentication;
+import com.deliveryManPlus.common.utils.SessionValidator;
 import com.deliveryManPlus.shop.model.dto.CreateRequestDto;
 import com.deliveryManPlus.shop.model.dto.ShopDetailResponseDto;
 import com.deliveryManPlus.shop.model.dto.ShopStatusRequestDto;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ShopForOwnerController {
     private final ShopService shopService;
-
+    private final SessionValidator sessionValidator;
     @PostMapping
     public ResponseEntity<Void> create(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
                                        @Valid @RequestBody CreateRequestDto dto) {

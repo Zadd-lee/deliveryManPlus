@@ -15,7 +15,7 @@ public interface ShopService {
 
     List<ShopResponseDto> findAll();
 
-    ShopResponseDto findById(Long shopId);
+    ShopDetailResponseDto findById(Long shopId);
 
     ShopDetailResponseDto updateShop(Long shopId, Authentication auth, UpdateRequestDto dto);
 

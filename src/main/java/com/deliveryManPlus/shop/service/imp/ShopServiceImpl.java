@@ -55,14 +55,14 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ShopResponseDto findById(Long shopId) {
+    public ShopDetailResponseDto findById(Long shopId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
         if(shop.getStatus() == ShopStatus.CLOSED_DOWN){
             throw new ApiException(ShopErrorCode.NOT_VALUABLE);
         }
-        return new ShopResponseDto(shop);
+        return new ShopDetailResponseDto(shop,shop.getMenuList());
 
     }
 
@@ -74,11 +74,13 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
+
+
         if(!shop.getOwner().equals(user)){
             throw new ApiException(SessionErrorCode.NOT_ALLOWED);
         }
         shop.updateByDto(dto);
-        return new ShopDetailResponseDto(shop);
+        return new ShopDetailResponseDto(shop,shop.getMenuList());
     }
 
     @Override
@@ -96,7 +98,7 @@ public class ShopServiceImpl implements ShopService {
             throw new ApiException(ShopErrorCode.NOT_FOUND);
         }
         shop.updateStatus(status);
-        return new ShopDetailResponseDto(shop);
+        return new ShopDetailResponseDto(shop,shop.getMenuList());
     }
 
     @Override

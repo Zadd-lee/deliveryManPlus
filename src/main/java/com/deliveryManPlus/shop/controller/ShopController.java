@@ -1,5 +1,6 @@
 package com.deliveryManPlus.shop.controller;
 
+import com.deliveryManPlus.shop.model.dto.ShopDetailResponseDto;
 import com.deliveryManPlus.shop.model.dto.ShopResponseDto;
 import com.deliveryManPlus.shop.service.ShopService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class ShopController {
     }
 
     @GetMapping("/{shopId}")
-    public ResponseEntity<ShopResponseDto> findById(@PathVariable Long shopId){
-        ShopResponseDto dto = shopService.findById(shopId);
+    public ResponseEntity<ShopDetailResponseDto> findById(@PathVariable Long shopId){
+        ShopDetailResponseDto dto = shopService.findById(shopId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }

@@ -2,6 +2,7 @@ package com.deliveryManPlus.shop.model.entity;
 
 import com.deliveryManPlus.common.model.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.common.utils.StringUtils;
+import com.deliveryManPlus.menu.model.entity.Menu;
 import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.model.dto.UpdateRequestDto;
 import com.deliveryManPlus.user.model.entity.User;
@@ -11,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -49,6 +51,9 @@ public class Shop extends CreateAndUpdateDateEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User owner;
+
+    @OneToMany(mappedBy = "shop")
+    private List<Menu> menuList;
 
     public Shop() {
     }

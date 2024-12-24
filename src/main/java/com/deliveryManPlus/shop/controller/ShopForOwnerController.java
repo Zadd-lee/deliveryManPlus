@@ -23,7 +23,7 @@ public class ShopForOwnerController {
     @PostMapping
     public ResponseEntity<Void> create(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
                                        @Valid @RequestBody CreateRequestDto dto) {
-        shopService.create(auth, dto);
+        shopService.create(auth.getId(), dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -32,7 +32,7 @@ public class ShopForOwnerController {
                                                             @PathVariable Long shopId,
                                                             @Valid @RequestBody UpdateRequestDto dto) {
 
-        ShopDetailResponseDto responseDto =shopService.updateShop(shopId,auth, dto);
+        ShopDetailResponseDto responseDto =shopService.updateShop(shopId,auth.getId(), dto);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
@@ -40,13 +40,13 @@ public class ShopForOwnerController {
     public ResponseEntity<ShopDetailResponseDto> updateStatus(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
                                                               @PathVariable Long shopId,
                                                               @Valid @RequestBody ShopStatusRequestDto status) {
-        ShopDetailResponseDto dto = shopService.updateShopStatus(shopId, auth, status.getStatus());
+        ShopDetailResponseDto dto = shopService.updateShopStatus(shopId, auth.getId(), status.getStatus());
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
     @DeleteMapping("/{shopId}")
     public ResponseEntity<Void> delete(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
                                                               @PathVariable Long shopId) {
-        shopService.deleteShop(shopId, auth);
+        shopService.deleteShop(shopId, auth.getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -51,7 +51,7 @@ public class AuthController {
     @PostMapping("/leave")
     public ResponseEntity<Void> leave(@Valid @RequestBody LeaveRequestDto dto,
                                       @SessionAttribute(name = SessionConst.SESSION_KEY) Authentication authentication) {
-        authService.leave(dto,authentication);
+        authService.leave(dto, authentication.getId());
 
         return new ResponseEntity<>(HttpStatus.OK);
 

@@ -57,4 +57,9 @@ public class Order extends CreateAndUpdateDateEntity {
     public void updateStatus(OrderStatus status) {
         this.status = status;
     }
+
+    public void reject(String rejectReason) {
+        this.status = OrderStatus.REJECTED;
+        this.rejectReason = rejectReason;
+    }
 }

@@ -2,6 +2,7 @@ package com.deliveryManPlus.order.model.entity;
 
 import com.deliveryManPlus.common.model.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.order.constant.OrderStatus;
+import com.deliveryManPlus.shop.model.entity.Shop;
 import com.deliveryManPlus.user.model.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,10 @@ public class Order extends CreateAndUpdateDateEntity {
     @OneToMany(mappedBy = "order")
     private List<OrderMenu> orderMenu;
 
+    @ManyToOne
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
+
 
     public Order(MenuHistory menuHistory, User customer) {
         this.status = OrderStatus.SUBMIT;
@@ -47,5 +52,9 @@ public class Order extends CreateAndUpdateDateEntity {
     }
     public void updateOrderMenu(List<OrderMenu> orderMenuList) {
         this.orderMenu.addAll(orderMenuList);
+    }
+
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
     }
 }

@@ -1,6 +1,7 @@
 package com.deliveryManPlus.common.utils;
 
 import com.deliveryManPlus.menu.model.entity.Menu;
+import com.deliveryManPlus.order.model.entity.Order;
 import com.deliveryManPlus.shop.model.entity.Shop;
 
 public class EntityValidator {
@@ -23,5 +24,9 @@ public class EntityValidator {
      */
     public static boolean isValid(Long shopId, Menu menu) {
         return menu.getShop().getId().equals(shopId);
+    }
+
+    public static boolean isValid(Long shopId, Order order) {
+        return order.getShop().getId().equals(shopId);
     }
 }

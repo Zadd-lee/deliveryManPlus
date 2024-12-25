@@ -13,6 +13,8 @@ public interface OrderService {
 
     List<OrderResponseDto> findOrderForUser(Long userId);
 
+    List<OrderResponseDto> findOrderForOwner(Long userId, Long shopId);
+
     OrderResponseDto updateStatus(Long id, Long shopId, Long orderId, @Valid OrderStatusUpdateDto dto);
 
     void reject(Long userid, Long shopId, Long orderId, @Valid OrderStatusRejectDto dto);

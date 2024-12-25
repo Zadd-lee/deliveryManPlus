@@ -32,6 +32,13 @@ public class OrderController {
         return new ResponseEntity<>(orderResponseDtos, HttpStatus.OK);
     }
 
+    @GetMapping("/owner/{shopId}/order")
+    public ResponseEntity<List<OrderResponseDto>> findOrderForOwner(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
+                                                                    @PathVariable Long shopId) {
+        List<OrderResponseDto> orderResponseDtos = orderService.findOrderForOwner(auth.getId(), shopId);
+        return new ResponseEntity<>(orderResponseDtos, HttpStatus.OK);
+    }
+
     @PutMapping("/owner/{shopId}/order/{orderId}")
     public ResponseEntity<OrderResponseDto> updateStatus(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth,
                                                          @PathVariable Long shopId,

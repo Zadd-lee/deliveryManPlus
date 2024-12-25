@@ -73,6 +73,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderResponseDto> findOrderForOwner(Long userId, Long shopId) {
+        List<Order> orderList = orderRepository.findByShopId(shopId);
+
+        //검증
+        if(orderList.isEmpty()){
+            throw new ApiException(OrderErrorCode.NOT_FOUND);
+        }
+        validateOrder(userId, shopId, orderList.get(0));
+        return orderList.stream()
+                .map(OrderResponseDto::new)
+                .toList();
+    }
+
+    @Override
     public OrderResponseDto updateStatus(Long userId, Long shopId, Long orderId, OrderStatusUpdateDto dto) {
         //검증
         Order order = orderRepository.findById(orderId)

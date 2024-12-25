@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class OrderController {
@@ -23,6 +25,11 @@ public class OrderController {
                                             @Valid @RequestBody CreateOrderRequestDto dto) {
         orderService.createOrder(auth.getId(), dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    @GetMapping("/user/order")
+    public ResponseEntity<List<OrderResponseDto>> findOrderForUser(@SessionAttribute(name = SessionConst.SESSION_KEY) Authentication auth) {
+        List<OrderResponseDto> orderResponseDtos = orderService.findOrderForUser(auth.getId());
+        return new ResponseEntity<>(orderResponseDtos, HttpStatus.OK);
     }
 
     @PutMapping("/owner/{shopId}/order/{orderId}")

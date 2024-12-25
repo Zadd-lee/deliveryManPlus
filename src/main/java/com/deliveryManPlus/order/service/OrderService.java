@@ -6,8 +6,12 @@ import com.deliveryManPlus.order.model.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.model.dto.OrderStatusUpdateDto;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 public interface OrderService {
     void createOrder(Long id, @Valid CreateOrderRequestDto menuList);
+
+    List<OrderResponseDto> findOrderForUser(Long userId);
 
     OrderResponseDto updateStatus(Long id, Long shopId, Long orderId, @Valid OrderStatusUpdateDto dto);
 

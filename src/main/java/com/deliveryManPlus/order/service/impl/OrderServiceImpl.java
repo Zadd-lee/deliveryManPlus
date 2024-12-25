@@ -65,6 +65,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderResponseDto> findOrderForUser(Long userId) {
+        List<Order> orderList = orderRepository.findByCustomerId(userId);
+        return orderList.stream()
+                .map(OrderResponseDto::new)
+                .toList();
+    }
+
+    @Override
     public OrderResponseDto updateStatus(Long userId, Long shopId, Long orderId, OrderStatusUpdateDto dto) {
         //검증
         Order order = orderRepository.findById(orderId)

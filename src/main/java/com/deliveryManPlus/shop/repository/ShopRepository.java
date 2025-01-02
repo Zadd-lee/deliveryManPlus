@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ShopRepository extends JpaRepository<Shop,Long> {
     @Query("select s from Shop s where s.status!='CLOSED_DOWN'")
     List<Shop> findAllNotClosedDown();
 
-    boolean existsShopByRegistNumber(String registNumber);
+
+    Optional<Shop> findByRegistNumber(String registNumber);
 }

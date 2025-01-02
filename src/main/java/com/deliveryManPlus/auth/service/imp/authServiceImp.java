@@ -59,6 +59,10 @@ public class authServiceImp implements AuthService {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
 
+        if(basicAuth.getUser().getStatus().equals(Status.CANCEL)){
+            throw new ApiException(SessionErrorCode);
+        }
+
         return new Authentication(basicAuth);
     }
 

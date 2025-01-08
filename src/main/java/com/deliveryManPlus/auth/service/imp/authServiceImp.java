@@ -60,7 +60,7 @@ public class authServiceImp implements AuthService {
         }
 
         if(basicAuth.getUser().getStatus().equals(Status.CANCEL)){
-            throw new ApiException(SessionErrorCode);
+            throw new ApiException(SessionErrorCode.NOT_ALLOWED);
         }
 
         return new Authentication(basicAuth);

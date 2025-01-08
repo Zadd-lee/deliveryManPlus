@@ -28,7 +28,7 @@ import java.util.Optional;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class authServiceImp implements AuthService {
+public class AuthServiceImp implements AuthService {
 
     private final AuthRepository authRepository;
     private final UserRepository userRepository;

@@ -38,7 +38,8 @@ public class WebConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->
-                        auth.requestMatchers(WHITE_LIST).permitAll()
+                        auth
+                                .requestMatchers(WHITE_LIST).permitAll()
                                 // static 리소스 경로
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 // 일부 dispatch 타입

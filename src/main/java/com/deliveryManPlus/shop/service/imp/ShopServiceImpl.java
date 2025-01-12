@@ -1,6 +1,5 @@
 package com.deliveryManPlus.shop.service.imp;
 
-import com.deliveryManPlus.common.exception.constant.SessionErrorCode;
 import com.deliveryManPlus.common.exception.constant.ShopErrorCode;
 import com.deliveryManPlus.common.exception.exception.ApiException;
 import com.deliveryManPlus.shop.constant.ShopStatus;
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.deliveryManPlus.common.utils.EntityValidator.isValid;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -29,10 +26,8 @@ public class ShopServiceImpl implements ShopService {
     private final UserRepository userRepository;
 
     @Override
-    public void create(Long userId, CreateRequestDto dto) {
+    public void create(User user, CreateRequestDto dto) {
         //검증
-        User user = userRepository.findById(userId).get();
-
         if (shopRepository.findByRegistNumber(dto.getRegistNumber()).isPresent()) {
             throw new ApiException(ShopErrorCode.NOT_VALUABLE);
         }
@@ -66,26 +61,21 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ShopDetailResponseDto updateShop(Long shopId, Long userId, UpdateRequestDto dto) {
+    public ShopDetailResponseDto updateShop(Long shopId, UpdateRequestDto dto) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
-
-        validateUserAndShop(userId, shop);
-
-
         shop.updateByDto(dto);
         return new ShopDetailResponseDto(shop, shop.getMenuList());
     }
 
 
     @Override
-    public ShopDetailResponseDto updateShopStatus(Long shopId, Long userId, ShopStatus status) {
+    public ShopDetailResponseDto updateShopStatus(Long shopId, ShopStatus status) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
-        validateUserAndShop(userId, shop);
         validateShopStatus(shop);
 
         shop.updateStatus(status);
@@ -93,24 +83,13 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public void deleteShop(Long shopId, Long userId) {
+    public void deleteShop(Long shopId) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
-
-        validateUserAndShop(userId, shop);
         validateShopStatus(shop);
 
         shop.updateStatus(ShopStatus.CLOSED_DOWN);
-    }
-
-
-    //userId와 shop의 owner가 같은지 확인
-
-    private static void validateUserAndShop(Long userId, Shop shop) {
-        if (isValid(userId, shop)) {
-            throw new ApiException(SessionErrorCode.NOT_ALLOWED);
-        }
     }
 
     //shop의 status가 폐업이 아닌지 확인

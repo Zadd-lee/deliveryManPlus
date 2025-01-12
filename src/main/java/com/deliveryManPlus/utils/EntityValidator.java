@@ -1,10 +1,20 @@
 package com.deliveryManPlus.utils;
 
+import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.entity.Menu;
 import com.deliveryManPlus.entity.Order;
 import com.deliveryManPlus.entity.Shop;
+import com.deliveryManPlus.entity.User;
+import com.deliveryManPlus.exception.ApiException;
 
 public class EntityValidator {
+
+    public static void validate(Shop shop) {
+        User owner = SecurityUtils.getUser();
+        if (!isValid(owner.getId(), shop)) {
+            throw new ApiException(ShopErrorCode.FORBIDDEN);
+        }
+    }
 
     /**
      * 사용자가 가게의 소유자인지 확인

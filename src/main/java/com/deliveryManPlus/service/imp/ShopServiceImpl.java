@@ -1,29 +1,29 @@
 package com.deliveryManPlus.service.imp;
 
-import com.deliveryManPlus.constant.error.ShopErrorCode;
-import com.deliveryManPlus.exception.ApiException;
 import com.deliveryManPlus.constant.ShopStatus;
+import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.dto.shop.ShopCreateRequestDto;
 import com.deliveryManPlus.dto.shop.ShopDetailResponseDto;
 import com.deliveryManPlus.dto.shop.ShopResponseDto;
 import com.deliveryManPlus.dto.shop.ShopUpdateRequestDto;
 import com.deliveryManPlus.entity.Shop;
+import com.deliveryManPlus.entity.User;
+import com.deliveryManPlus.exception.ApiException;
 import com.deliveryManPlus.repository.ShopRepository;
 import com.deliveryManPlus.service.ShopService;
-import com.deliveryManPlus.entity.User;
-import com.deliveryManPlus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.deliveryManPlus.utils.EntityValidator.validate;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ShopServiceImpl implements ShopService {
     private final ShopRepository shopRepository;
-    private final UserRepository userRepository;
 
     @Override
     public void create(User user, ShopCreateRequestDto dto) {
@@ -65,6 +65,9 @@ public class ShopServiceImpl implements ShopService {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+
+        validate(shop);
+
         shop.updateByDto(dto);
         return new ShopDetailResponseDto(shop, shop.getMenuList());
     }
@@ -76,6 +79,7 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
+        validate(shop);
         validateShopStatus(shop);
 
         shop.updateStatus(status);
@@ -87,6 +91,7 @@ public class ShopServiceImpl implements ShopService {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+        validate(shop);
         validateShopStatus(shop);
 
         shop.updateStatus(ShopStatus.CLOSED_DOWN);

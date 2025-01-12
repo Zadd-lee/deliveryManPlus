@@ -1,5 +1,6 @@
 package com.deliveryManPlus.service.imp;
 
+import com.deliveryManPlus.constant.ShopStatus;
 import com.deliveryManPlus.constant.error.MenuErrorCode;
 import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.exception.ApiException;
@@ -12,7 +13,7 @@ import com.deliveryManPlus.repository.MenuRepository;
 import com.deliveryManPlus.service.MenuService;
 import com.deliveryManPlus.entity.Shop;
 import com.deliveryManPlus.repository.ShopRepository;
-import com.deliveryManPlus.repository.UserRepository;
+import com.deliveryManPlus.utils.EntityValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,15 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MenuServiceImp implements MenuService {
     private final MenuRepository menuRepository;
-    private final UserRepository userRepository;
     private final ShopRepository shopRepository;
 
     @Override
     public void create(Long shopId, MenuCreateRequestDto dto) {
         //검증
-        //todo 폐업 제외 검색 리팩토링 진행할 것.
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+
+        //validation
+        if(shop.getStatus().equals(ShopStatus.CLOSED_DOWN)){
+            throw new ApiException(ShopErrorCode.NOT_VALUABLE);
+        }
+
+        EntityValidator.validate();
 
 
         Menu menu = dto.toEntity();

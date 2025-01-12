@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ShopErrorCode implements ErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND,"가게를 찾을 수 없습니다"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "잘못된 접근입니다."),
     NOT_VALUABLE(HttpStatus.BAD_REQUEST, "폐업한 가게입니다"),;
 
 

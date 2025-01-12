@@ -2,6 +2,7 @@ package com.deliveryManPlus.service.imp;
 
 import com.deliveryManPlus.constant.error.MenuErrorCode;
 import com.deliveryManPlus.constant.error.OrderErrorCode;
+import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.dto.order.OrderCreateRequestDto;
 import com.deliveryManPlus.dto.order.OrderResponseDto;
 import com.deliveryManPlus.dto.order.OrderStatusRejectDto;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.deliveryManPlus.utils.EntityValidator.validate;
+
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class OrderServiceImp implements OrderService {
     private final MenuHistoryRepository menuHistoryRepository;
     private final UserRepository userRepository;
     private final OrderMenuRepository orderMenuRepository;
+    private final ShopRepository shopRepository;
 
 
     @Override
@@ -59,9 +63,14 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public List<OrderResponseDto> findOrderForOwner(Long shopId) {
+        //가게 검증
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+        validate(shop);
+
         List<Order> orderList = orderRepository.findByShopId(shopId);
 
-        //검증
+        //주문 검증
         if(orderList.isEmpty()){
             throw new ApiException(OrderErrorCode.NOT_FOUND);
         }
@@ -71,8 +80,12 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public OrderResponseDto updateStatus(Long userId, Long orderId, OrderStatusUpdateDto dto) {
+    public OrderResponseDto updateStatus(Long shopId, Long orderId, OrderStatusUpdateDto dto) {
         //검증
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+        validate(shop);
+
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
 
@@ -82,8 +95,13 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public void reject(Long userId, Long orderId, OrderStatusRejectDto dto) {
-        //검증
+    public void reject(Long shopId, Long orderId, OrderStatusRejectDto dto) {
+        //가게 검증
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+        validate(shop);
+
+        //주문검증
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
         order.reject(dto.getRejectReason());

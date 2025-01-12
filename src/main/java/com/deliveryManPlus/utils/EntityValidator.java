@@ -1,5 +1,6 @@
 package com.deliveryManPlus.utils;
 
+import com.deliveryManPlus.constant.error.MenuErrorCode;
 import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.entity.Menu;
 import com.deliveryManPlus.entity.Order;
@@ -13,6 +14,12 @@ public class EntityValidator {
         User owner = SecurityUtils.getUser();
         if (!isValid(owner.getId(), shop)) {
             throw new ApiException(ShopErrorCode.FORBIDDEN);
+        }
+    }
+
+    public static void validate(Menu menu, Shop shop){
+        if(!isValid(shop.getId(), menu)){
+            throw new ApiException(MenuErrorCode.NOT_FOUND);
         }
     }
 

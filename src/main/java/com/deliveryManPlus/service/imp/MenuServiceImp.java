@@ -2,22 +2,23 @@ package com.deliveryManPlus.service.imp;
 
 import com.deliveryManPlus.constant.ShopStatus;
 import com.deliveryManPlus.constant.error.MenuErrorCode;
-import com.deliveryManPlus.constant.error.ShopErrorCode;
-import com.deliveryManPlus.exception.ApiException;
 import com.deliveryManPlus.constant.error.MenuStatus;
+import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.dto.menu.MenuCreateRequestDto;
 import com.deliveryManPlus.dto.menu.MenuUpdateRequestDto;
 import com.deliveryManPlus.dto.menu.MenuUpdateStatusRequestDto;
 import com.deliveryManPlus.entity.Menu;
-import com.deliveryManPlus.repository.MenuRepository;
-import com.deliveryManPlus.service.MenuService;
 import com.deliveryManPlus.entity.Shop;
+import com.deliveryManPlus.exception.ApiException;
+import com.deliveryManPlus.repository.MenuRepository;
 import com.deliveryManPlus.repository.ShopRepository;
-import com.deliveryManPlus.utils.EntityValidator;
+import com.deliveryManPlus.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.deliveryManPlus.utils.EntityValidator.validate;
 
 @Service
 @Transactional
@@ -37,8 +38,7 @@ public class MenuServiceImp implements MenuService {
             throw new ApiException(ShopErrorCode.NOT_VALUABLE);
         }
 
-        EntityValidator.validate();
-
+        validate(shop);
 
         Menu menu = dto.toEntity();
         menu.updateShop(shop);
@@ -56,6 +56,9 @@ public class MenuServiceImp implements MenuService {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
 
+        validate(shop);
+        validate(menu, shop);
+
         menu.updateByDto(dto);
 
     }
@@ -69,6 +72,9 @@ public class MenuServiceImp implements MenuService {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
 
+        validate(shop);
+        validate(menu, shop);
+
         menu.updateStatus(dto.getStatus());
     }
 
@@ -80,6 +86,10 @@ public class MenuServiceImp implements MenuService {
 
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+
+        validate(shop);
+        validate(menu, shop);
+        
         menu.updateStatus(MenuStatus.NOT_USE);
     }
 

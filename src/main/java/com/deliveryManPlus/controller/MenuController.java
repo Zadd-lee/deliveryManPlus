@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "메뉴", description = "메뉴 API")
+@Tag(name = "Menu", description = "메뉴 API")
 @RestController
 @RequestMapping("/owner/{shopId}/menu")
 @RequiredArgsConstructor
@@ -23,7 +23,6 @@ public class MenuController {
     private final MenuService menuService;
 
     @Operation(summary = "메뉴 생성", description = "메뉴를 생성합니다."
-            , tags = {"메뉴"}
     ,responses = {
         @ApiResponse(responseCode = "201", description = "메뉴 생성 성공"),
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -41,7 +40,6 @@ public class MenuController {
     }
 
     @Operation(summary = "메뉴 수정", description = "메뉴를 수정합니다."
-            , tags = {"메뉴"}
             ,responses = {
             @ApiResponse(responseCode = "200", description = "메뉴 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -61,7 +59,6 @@ public class MenuController {
     }
 
     @Operation(summary = "메뉴 상태 수정", description = "메뉴 상태를 수정합니다."
-            , tags = {"메뉴"}
             ,responses = {
             @ApiResponse(responseCode = "200", description = "메뉴 상태 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -81,7 +78,6 @@ public class MenuController {
     }
 
     @Operation(summary = "메뉴 삭제", description = "메뉴를 삭제합니다."
-            , tags = {"메뉴"}
             ,responses = {
             @ApiResponse(responseCode = "200", description = "메뉴 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),

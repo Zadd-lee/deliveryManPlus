@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "주문", description = "주문 API")
+@Tag(name = "Order", description = "주문 API")
 @RestController
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
 
-    @Operation(summary = "주문 생성", description = "주문을 생성합니다.", tags = {"주문"}
+    @Operation(summary = "주문 생성", description = "주문을 생성합니다."
     ,responses = {
             @ApiResponse(responseCode = "201", description = "주문 생성 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -38,7 +38,7 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @Operation(summary = "주문 조회", description = "사용자의 주문을 조회합니다.", tags = {"주문"}
+    @Operation(summary = "주문 조회", description = "사용자의 주문을 조회합니다."
             ,responses = {
             @ApiResponse(responseCode = "200", description = "주문 조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -50,7 +50,7 @@ public class OrderController {
         return new ResponseEntity<>(orderResponseDtos, HttpStatus.OK);
     }
 
-    @Operation(summary = "주문 조회", description = "해당 식당의 주문을 조회합니다.", tags = {"주문"}
+    @Operation(summary = "주문 조회", description = "해당 식당의 주문을 조회합니다."
             ,responses = {
             @ApiResponse(responseCode = "200", description = "주문 조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -65,7 +65,7 @@ public class OrderController {
         return new ResponseEntity<>(orderResponseDtos, HttpStatus.OK);
     }
 
-    @Operation(summary = "주문 상태 변경", description = "주문의 상태를 변경합니다.", tags = {"주문"}
+    @Operation(summary = "주문 상태 변경", description = "주문의 상태를 변경합니다."
             ,responses = {
             @ApiResponse(responseCode = "200", description = "주문 상태 변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -84,7 +84,7 @@ public class OrderController {
         return new ResponseEntity<>(orderResponseDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "주문 거절", description = "주문을 거절합니다.", tags = {"주문"}
+    @Operation(summary = "주문 거절", description = "주문을 거절합니다."
             ,responses = {
             @ApiResponse(responseCode = "200", description = "주문 거절 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),

@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-@Tag(name = "인증/인가", description = "로그인, 로그아웃, 회원가입 API")
+@Tag(name = "Auth", description = "로그인, 로그아웃, 회원가입 API")
 public class AuthController {
 
     private final AuthService authService;
 
 
     @Operation(summary = "회원가입", description = "회원가입을 진행합니다."
-            , tags = {"인증/인가"}, responses = {
+            , responses = {
         @ApiResponse(responseCode = "201", description = "회원가입 성공"),
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일"),
@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @Operation(summary = "로그인", description = "로그인을 진행합니다."
-            , tags = {"인증/인가"},responses = {
+            ,responses = {
         @ApiResponse(responseCode = "200", description = "로그인 성공"),
         @ApiResponse(responseCode = "400", description = "잘못된 요청"),
         @ApiResponse(responseCode = "401", description = "인증 실패"),
@@ -56,7 +56,7 @@ public class AuthController {
     }
 
     @Operation(summary = "로그아웃", description = "로그아웃을 진행합니다."
-            , tags = {"인증/인가"},responses = {
+            ,responses = {
         @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
         @ApiResponse(responseCode = "401", description = "로그인 필요"),
         @ApiResponse(responseCode = "500", description = "서버 오류")

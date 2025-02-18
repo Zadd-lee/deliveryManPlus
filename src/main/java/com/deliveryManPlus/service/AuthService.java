@@ -1,5 +1,6 @@
 package com.deliveryManPlus.service;
 
+import com.deliveryManPlus.dto.TokenRequestDto;
 import com.deliveryManPlus.dto.auth.JwtAuthResponseDto;
 import com.deliveryManPlus.dto.auth.LeaveRequestDto;
 import com.deliveryManPlus.dto.auth.LoginRequestDto;
@@ -13,4 +14,6 @@ public interface AuthService {
     JwtAuthResponseDto login(@Valid LoginRequestDto dto);
 
     void leave(LeaveRequestDto dto, Long authentication);
+
+    JwtAuthResponseDto refreshToken(TokenRequestDto refreshToken);
 }

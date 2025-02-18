@@ -1,7 +1,7 @@
 package com.deliveryManPlus.filter;
 
 import com.deliveryManPlus.constant.AuthenticationScheme;
-import com.deliveryManPlus.utils.JwtProvider;
+import com.deliveryManPlus.utils.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -25,7 +26,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtProvider jwtProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -41,15 +42,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         //토큰 검증
         String token = this.getTokenFromRequest(request);
-        if (!jwtProvider.validToken(token)) {
+        if (!jwtTokenProvider.validateToken(token)) {
             return;
         }
 
         //토큰에서 유저 정보 추출
-        String username = jwtProvider.getUsername(token);
+        User user = (User) jwtTokenProvider.getAuthentication(token).getPrincipal();
 
         //userName을 갖는 유저를 꺼냄
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
 
 
         this.setAuthentication(request,userDetails);

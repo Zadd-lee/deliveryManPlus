@@ -2,9 +2,11 @@ package com.deliveryManPlus.dto.shop;
 
 import com.deliveryManPlus.constant.ShopStatus;
 import com.deliveryManPlus.entity.Shop;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema(description = "상점 응답 정보")
 @NoArgsConstructor
 @Getter
 public class ShopResponseDto {

@@ -1,13 +1,15 @@
 package com.deliveryManPlus.dto.order;
 
 import com.deliveryManPlus.entity.OrderMenu;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 
+@Getter
 public class OrderMenuResponseDto {
-    private String name;
-    private BigDecimal price;
-    private int quantity;
+    private final String name;
+    private final BigDecimal price;
+    private final int quantity;
 
     public OrderMenuResponseDto(OrderMenu orderMenu) {
         this.name = orderMenu.getMenuHistory().getName();

@@ -14,4 +14,6 @@ public class JwtAuthResponseDto {
 
   private String accessToken;
 
+  private String refreshToken;
+
 }

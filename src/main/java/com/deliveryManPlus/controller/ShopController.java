@@ -42,9 +42,12 @@ public class ShopController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "상점 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
+    }
+    ,parameters = {
+            @Parameter(name = "shopId", description = "상점 식별자", required = true, example = "1")
     })
     @GetMapping("/{shopId}")
-    public ResponseEntity<ShopDetailResponseDto> findById(@Parameter(name = "test") @PathVariable Long shopId){
+    public ResponseEntity<ShopDetailResponseDto> findById(@PathVariable Long shopId){
         ShopDetailResponseDto dto = shopService.findById(shopId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

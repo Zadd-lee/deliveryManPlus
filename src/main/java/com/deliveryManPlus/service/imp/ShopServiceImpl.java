@@ -28,10 +28,14 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public void create(User user, ShopCreateRequestDto dto) {
         //검증
-        if (shopRepository.findByRegistNumber(dto.getRegistNumber()).isPresent()) {
-            throw new ApiException(ShopErrorCode.NOT_VALUABLE);
-        }
-        
+        shopRepository.findByRegistNumber(dto.getRegistNumber())
+                .ifPresent(shop -> {
+                    if (shop.getStatus() != ShopStatus.CLOSED_DOWN) {
+                        throw new ApiException(ShopErrorCode.NOT_VALUABLE);
+                    }
+                    throw new ApiException(ShopErrorCode.DUPLICATED_SHOP);
+                });
+
         Shop shop = dto.toEntity();
         shop.updateOwner(user);
 

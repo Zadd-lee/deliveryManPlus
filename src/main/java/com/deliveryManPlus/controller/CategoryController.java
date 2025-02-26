@@ -13,22 +13,22 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/category")
+@RequestMapping
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @PostMapping
+    @PostMapping("/admin/category")
     public ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDto dto) {
         categoryService.createCategory(dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/category")
     public ResponseEntity<List<CategoryResponseDto>> getCategoryList(@RequestBody CategorySearchRequestDto dto) {
         return new ResponseEntity<>(categoryService.getCategoryList(dto), HttpStatus.OK);
     }
 
-    @PatchMapping("/{categoryId}")
+    @PatchMapping("/admin/category/{categoryId}")
     public ResponseEntity<Void> updateCategory(@PathVariable(name = "categoryId") Long categoryId, @RequestBody CategoryRequestDto dto) {
         categoryService.updateCategory(categoryId, dto);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -39,5 +39,7 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    
 
 }

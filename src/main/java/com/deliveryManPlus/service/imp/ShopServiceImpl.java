@@ -1,14 +1,18 @@
 package com.deliveryManPlus.service.imp;
 
 import com.deliveryManPlus.constant.ShopStatus;
+import com.deliveryManPlus.constant.Status;
+import com.deliveryManPlus.constant.error.CategoryErrorCode;
 import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.dto.shop.ShopCreateRequestDto;
 import com.deliveryManPlus.dto.shop.ShopDetailResponseDto;
 import com.deliveryManPlus.dto.shop.ShopResponseDto;
 import com.deliveryManPlus.dto.shop.ShopUpdateRequestDto;
+import com.deliveryManPlus.entity.Category;
 import com.deliveryManPlus.entity.Shop;
 import com.deliveryManPlus.entity.User;
 import com.deliveryManPlus.exception.ApiException;
+import com.deliveryManPlus.repository.CategoryRepository;
 import com.deliveryManPlus.repository.ShopRepository;
 import com.deliveryManPlus.service.ShopService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ import static com.deliveryManPlus.utils.EntityValidator.validate;
 @Transactional
 public class ShopServiceImpl implements ShopService {
     private final ShopRepository shopRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public void create(User user, ShopCreateRequestDto dto) {
@@ -36,8 +41,17 @@ public class ShopServiceImpl implements ShopService {
                     throw new ApiException(ShopErrorCode.DUPLICATED_SHOP);
                 });
 
+        Category category = categoryRepository.findByIdOrElseThrows(dto.getCategoryId());
+        if (category.getStatus() == Status.DELETED) {
+            throw new ApiException(CategoryErrorCode.NOT_VALUABLE);
+        }
+
+
         Shop shop = dto.toEntity();
+
         shop.updateOwner(user);
+        shop.updateCategory(category);
+
 
         shopRepository.save(shop);
     }

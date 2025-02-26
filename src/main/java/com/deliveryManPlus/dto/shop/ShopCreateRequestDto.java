@@ -18,6 +18,8 @@ public class ShopCreateRequestDto {
     @Schema(description = "사업자 등록번호", example = "123-45-67890")
     private String registNumber;
 
+    private Long categoryId;
+
     @Schema(description = "상점 이름", example = "금니 정식 원빈점")
     private String name;
 

@@ -75,4 +75,8 @@ public class Shop extends CreateAndUpdateDateEntity {
     public void updateStatus(ShopStatus status) {
         this.status = status;
     }
+
+    public void updateCategory(Category category) {
+        this.category = category;
+    }
 }

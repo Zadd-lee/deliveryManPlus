@@ -1,9 +1,7 @@
 package com.deliveryManPlus.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.deliveryManPlus.constant.Status;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,10 +13,11 @@ public class Category extends CreateAndUpdateDateEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
     private String name;
-    private Boolean isDeleted;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     public Category(String name) {
         this.name = name;
-        this.isDeleted = false;
+        this.status = Status.USE;
     }
 }

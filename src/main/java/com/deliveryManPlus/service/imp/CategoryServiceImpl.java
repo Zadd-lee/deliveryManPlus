@@ -54,4 +54,12 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findByIdOrElseThrows(categoryId);
         category.updateName(dto.getName());
     }
+
+    @Transactional
+    @Override
+    public void deleteCategory(Long categoryId) {
+        //검증
+        Category category = categoryRepository.findByIdOrElseThrows(categoryId);
+        category.delete();
+    }
 }

@@ -24,4 +24,7 @@ public class Category extends CreateAndUpdateDateEntity{
     public void updateName(String name) {
         this.name = name;
     }
+    public void delete() {
+        this.status = Status.DELETED;
+    }
 }

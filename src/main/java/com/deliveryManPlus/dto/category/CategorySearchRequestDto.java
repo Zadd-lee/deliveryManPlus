@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CategorySearchRequestDto {
 
-    boolean isPresent;
+    String useYn;
 //    String name;
 }

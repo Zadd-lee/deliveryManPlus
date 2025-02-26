@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -36,16 +37,19 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryResponseDto> getCategoryList(CategorySearchRequestDto dto) {
 
         return categoryRepository.findAll().stream()
-                .filter(category -> {
-                    if (dto.isPresent()) {
-                        return category.getStatus().equals(Status.USE);
-                    } else {
-                        return true;
-                    }
-                })
+                .filter(getStatusPredicate(dto.getUseYn()))
                 .map(CategoryResponseDto::new)
                 .toList();
     }
+
+        private Predicate<Category> getStatusPredicate(String useYn) {
+            return switch (useYn) {
+                case "Y" -> category -> category.getStatus() == Status.USE;
+                case "N" -> category -> category.getStatus() == Status.DELETED;
+                default -> category -> true;
+            };
+        }
+
 
     @Transactional
     @Override

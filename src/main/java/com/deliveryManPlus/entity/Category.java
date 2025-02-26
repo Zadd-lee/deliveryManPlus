@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -15,6 +17,9 @@ public class Category extends CreateAndUpdateDateEntity{
     private String name;
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @OneToMany(mappedBy = "category")
+    private List<Shop> shopList;
 
     public Category(String name) {
         this.name = name;

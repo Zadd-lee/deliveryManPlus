@@ -23,8 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -39,8 +37,7 @@ public class AuthServiceImp implements AuthService {
     @Override
     public void signin(SigninRequestDto dto) {
         //검증
-        Optional<BasicAuth> byEmail = authRepository.findByEmail(dto.getEmail());
-        if(byEmail.isPresent()){
+        if(authRepository.existsByEmail(dto.getEmail())){
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
 

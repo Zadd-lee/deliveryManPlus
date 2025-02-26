@@ -1,5 +1,6 @@
 package com.deliveryManPlus.controller;
 
+import com.deliveryManPlus.dto.shop.ShopSearchOptionDto;
 import com.deliveryManPlus.dto.shop.ShopDetailResponseDto;
 import com.deliveryManPlus.dto.shop.ShopResponseDto;
 import com.deliveryManPlus.service.ShopService;
@@ -7,13 +8,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,9 +30,8 @@ public class ShopController {
         @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping
-    public ResponseEntity<List<ShopResponseDto>> findAll(){
-        List<ShopResponseDto> responseDtos = shopService.findAll();
-        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
+    public ResponseEntity<List<ShopResponseDto>> findAll(@Valid @RequestBody ShopSearchOptionDto dto){
+        return new ResponseEntity<>(shopService.findAll(dto), HttpStatus.OK);
     }
 
     @Operation(summary = "상점 조회", description = "상점을 조회합니다."

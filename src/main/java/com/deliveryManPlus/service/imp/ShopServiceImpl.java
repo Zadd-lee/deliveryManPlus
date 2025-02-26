@@ -4,10 +4,7 @@ import com.deliveryManPlus.constant.ShopStatus;
 import com.deliveryManPlus.constant.Status;
 import com.deliveryManPlus.constant.error.CategoryErrorCode;
 import com.deliveryManPlus.constant.error.ShopErrorCode;
-import com.deliveryManPlus.dto.shop.ShopCreateRequestDto;
-import com.deliveryManPlus.dto.shop.ShopDetailResponseDto;
-import com.deliveryManPlus.dto.shop.ShopResponseDto;
-import com.deliveryManPlus.dto.shop.ShopUpdateRequestDto;
+import com.deliveryManPlus.dto.shop.*;
 import com.deliveryManPlus.entity.Category;
 import com.deliveryManPlus.entity.Shop;
 import com.deliveryManPlus.entity.User;
@@ -57,10 +54,10 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public List<ShopResponseDto> findAll() {
-        List<Shop> shopList = shopRepository.findAllNotClosedDown();
+    public List<ShopResponseDto> findAll(ShopSearchOptionDto dto) {
 
-        return shopList.stream()
+        return shopRepository.findAll(dto.getCategoryId())
+                .stream()
                 .map(ShopResponseDto::new)
                 .toList();
 

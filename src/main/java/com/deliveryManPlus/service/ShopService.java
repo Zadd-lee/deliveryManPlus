@@ -1,10 +1,7 @@
 package com.deliveryManPlus.service;
 
 import com.deliveryManPlus.constant.ShopStatus;
-import com.deliveryManPlus.dto.shop.ShopCreateRequestDto;
-import com.deliveryManPlus.dto.shop.ShopDetailResponseDto;
-import com.deliveryManPlus.dto.shop.ShopResponseDto;
-import com.deliveryManPlus.dto.shop.ShopUpdateRequestDto;
+import com.deliveryManPlus.dto.shop.*;
 import com.deliveryManPlus.entity.User;
 import jakarta.validation.Valid;
 
@@ -13,7 +10,7 @@ import java.util.List;
 public interface ShopService {
     void create(User userId, @Valid ShopCreateRequestDto dto);
 
-    List<ShopResponseDto> findAll();
+    List<ShopResponseDto> findAll(ShopSearchOptionDto dto);
 
     ShopDetailResponseDto findById(Long shopId);
 

@@ -80,10 +80,12 @@ public class ShopServiceImpl implements ShopService {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+        Category category = categoryRepository.findByIdOrElseThrows(dto.getCategoryId());
 
         validate(shop);
 
         shop.updateByDto(dto);
+        shop.updateCategory(category);
         return new ShopDetailResponseDto(shop, shop.getMenuList());
     }
 

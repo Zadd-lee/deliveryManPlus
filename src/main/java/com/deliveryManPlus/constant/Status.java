@@ -1,6 +1,6 @@
 package com.deliveryManPlus.constant;
 
 public enum Status {
-    USE,CANCEL,;
+    USE,DELETED,;
 
 }

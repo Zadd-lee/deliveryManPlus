@@ -83,7 +83,7 @@ public class AuthServiceImp implements AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        user.setStatus(Status.CANCEL);
+        user.setStatus(Status.DELETED);
     }
 
     private void validatePassword(String rawPassword,String encodedPassword){

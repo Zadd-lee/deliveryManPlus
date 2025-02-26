@@ -2,7 +2,7 @@ package com.deliveryManPlus.service.imp;
 
 import com.deliveryManPlus.constant.Status;
 import com.deliveryManPlus.constant.error.CategoryErrorCode;
-import com.deliveryManPlus.dto.category.CategoryCreateRequestDto;
+import com.deliveryManPlus.dto.category.CategoryRequestDto;
 import com.deliveryManPlus.dto.category.CategoryResponseDto;
 import com.deliveryManPlus.dto.category.CategorySearchRequestDto;
 import com.deliveryManPlus.entity.Category;
@@ -22,7 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void createCategory(CategoryCreateRequestDto dto) {
+    public void createCategory(CategoryRequestDto dto) {
         //검증
         if(categoryRepository.existsByName(dto.getName())) {
             throw new ApiException(CategoryErrorCode.DUPLICATED_NAME);
@@ -45,5 +45,13 @@ public class CategoryServiceImpl implements CategoryService {
                 })
                 .map(CategoryResponseDto::new)
                 .toList();
+    }
+
+    @Transactional
+    @Override
+    public void updateCategory(Long categoryId, CategoryRequestDto dto) {
+        //검증
+        Category category = categoryRepository.findByIdOrElseThrows(categoryId);
+        category.updateName(dto.getName());
     }
 }

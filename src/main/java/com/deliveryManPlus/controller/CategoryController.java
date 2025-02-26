@@ -1,6 +1,6 @@
 package com.deliveryManPlus.controller;
 
-import com.deliveryManPlus.dto.category.CategoryCreateRequestDto;
+import com.deliveryManPlus.dto.category.CategoryRequestDto;
 import com.deliveryManPlus.dto.category.CategoryResponseDto;
 import com.deliveryManPlus.dto.category.CategorySearchRequestDto;
 import com.deliveryManPlus.service.CategoryService;
@@ -18,7 +18,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Void> createCategory(@RequestBody CategoryCreateRequestDto dto) {
+    public ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDto dto) {
         categoryService.createCategory(dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -26,6 +26,12 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryResponseDto>> getCategoryList(@RequestBody CategorySearchRequestDto dto) {
         return new ResponseEntity<>(categoryService.getCategoryList(dto), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{categoryId}")
+    public ResponseEntity<Void> updateCategory(@PathVariable(name = "categoryId") Long categoryId, @RequestBody CategoryRequestDto dto) {
+        categoryService.updateCategory(categoryId, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

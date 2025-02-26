@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class CategoryCreateRequestDto {
+public class CategoryRequestDto {
     @NotBlank
     private String name;
 

@@ -20,4 +20,8 @@ public class Category extends CreateAndUpdateDateEntity{
         this.name = name;
         this.status = Status.USE;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -121,6 +122,29 @@ public class AuthServiceImp implements AuthService {
 
         // 토큰 발급
         return jwtAuthResponseDto;
+    }
+
+
+    @Override
+    public void logout(String accessToken) {
+        // 1. Access Token 검증
+        if (!jwtTokenProvider.validateToken(accessToken)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        // 2. Access Token 에서 Member ID 가져오기
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        // 3. 저장소에서 Member ID 를 기반으로 Refresh Token 값 가져옴
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        // 4. Refresh Token 삭제
+        refreshTokenRepository.delete(refreshToken);
+
+        // 5. SecurityContext 에서 인증 정보 삭제
+        SecurityContextHolder.clearContext();
+
     }
 
     private void validatePassword(String rawPassword, String encodedPassword) {

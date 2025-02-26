@@ -5,9 +5,12 @@ import com.deliveryManPlus.dto.auth.JwtAuthResponseDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +18,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -159,4 +164,17 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    public String resolveAccessToken(HttpServletRequest request) {
+
+        final String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String headerPrefix = AuthenticationScheme.generateType(AuthenticationScheme.BEARER);
+
+        boolean tokenFound =
+                StringUtils.hasText(bearerToken) && bearerToken.startsWith(headerPrefix);
+        if (tokenFound) {
+            return bearerToken.substring(headerPrefix.length());
+        }else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+    }
 }

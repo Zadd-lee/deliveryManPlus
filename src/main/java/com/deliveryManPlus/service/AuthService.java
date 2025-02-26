@@ -16,4 +16,6 @@ public interface AuthService {
     void leave(LeaveRequestDto dto, Long authentication);
 
     JwtAuthResponseDto refreshToken(TokenRequestDto refreshToken);
+
+    void logout(String accessToken);
 }

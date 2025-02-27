@@ -81,6 +81,9 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
         Category category = categoryRepository.findByIdOrElseThrows(dto.getCategoryId());
+        if(category.getStatus() == Status.DELETED){
+            throw new ApiException(CategoryErrorCode.NOT_VALUABLE);
+        }
 
         validate(shop);
 

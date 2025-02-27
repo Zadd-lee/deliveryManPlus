@@ -27,6 +27,9 @@ public class ShopUpdateRequestDto {
     @Schema(description = "최소 주문 금액", example = "10000")
     private BigDecimal minimumOrderAmount;
 
+    @Schema(description = "카테고리 식별자", example = "1")
+    private Long categoryId;
+
 
 
 }

@@ -81,7 +81,7 @@ public class AuthServiceImp implements AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
 
-        user.setStatus(Status.CANCEL);
+        user.setStatus(Status.DELETED);
     }
 
     @Override

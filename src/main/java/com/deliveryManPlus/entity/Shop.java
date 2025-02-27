@@ -52,6 +52,10 @@ public class Shop extends CreateAndUpdateDateEntity {
     @OneToMany(mappedBy = "shop")
     private List<Menu> menuList;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     public Shop() {
     }
 
@@ -70,5 +74,9 @@ public class Shop extends CreateAndUpdateDateEntity {
 
     public void updateStatus(ShopStatus status) {
         this.status = status;
+    }
+
+    public void updateCategory(Category category) {
+        this.category = category;
     }
 }

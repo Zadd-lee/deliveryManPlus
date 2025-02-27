@@ -9,9 +9,10 @@ import org.springframework.validation.FieldError;
 
 import java.util.List;
 
+
+@Builder
 @Getter
 @RequiredArgsConstructor
-@Builder
 public class ErrorResponse {
     private final String code;
     private final String message;

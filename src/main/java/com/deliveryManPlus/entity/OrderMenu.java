@@ -1,7 +1,6 @@
 package com.deliveryManPlus.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +8,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-@Builder
-@AllArgsConstructor
 @Table(name = "orderd_menu")
 public class OrderMenu {
     @Id
@@ -27,6 +24,7 @@ public class OrderMenu {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @Builder
     public OrderMenu(MenuHistory menuHistory) {
         this.menuHistory = menuHistory;
         this.quantity = 1;

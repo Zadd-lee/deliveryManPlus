@@ -2,7 +2,6 @@ package com.deliveryManPlus.entity;
 
 import com.deliveryManPlus.constant.error.OrderStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +13,6 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
-@Builder
-@AllArgsConstructor
 @Table(name = "orders")
 public class Order extends CreateAndUpdateDateEntity {
     @Id
@@ -41,6 +38,7 @@ public class Order extends CreateAndUpdateDateEntity {
     private Shop shop;
 
 
+    @Builder
     public Order(MenuHistory menuHistory, User customer) {
         this.status = OrderStatus.SUBMIT;
         this.totalPrice = menuHistory.getPrice();

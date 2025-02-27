@@ -1,20 +1,19 @@
 package com.deliveryManPlus.entity;
 
-import com.deliveryManPlus.utils.StringUtils;
 import com.deliveryManPlus.constant.ShopStatus;
 import com.deliveryManPlus.dto.shop.ShopUpdateRequestDto;
+import com.deliveryManPlus.utils.StringUtils;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@NoArgsConstructor
 @Entity
-@AllArgsConstructor
 @Getter
-@Builder
 public class Shop extends CreateAndUpdateDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +55,16 @@ public class Shop extends CreateAndUpdateDateEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Shop() {
+    @Builder
+    public Shop(String registNumber, String name, String address, BigDecimal minimumOrderAmount, ShopStatus status, String openAt, String closedAt, String closedDay) {
+        this.registNumber = registNumber;
+        this.name = name;
+        this.address = address;
+        this.minimumOrderAmount = minimumOrderAmount;
+        this.status = status;
+        this.openAt = openAt;
+        this.closedAt = closedAt;
+        this.closedDay = closedDay;
     }
 
     public void updateOwner(User user) {

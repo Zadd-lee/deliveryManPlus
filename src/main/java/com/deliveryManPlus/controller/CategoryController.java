@@ -1,13 +1,13 @@
 package com.deliveryManPlus.controller;
 
-import com.deliveryManPlus.dto.category.CategoryRequestDto;
+import com.deliveryManPlus.dto.category.CategoryCreateRequestDto;
 import com.deliveryManPlus.dto.category.CategoryResponseDto;
 import com.deliveryManPlus.dto.category.CategorySearchRequestDto;
+import com.deliveryManPlus.dto.category.CategoryUpdateRequestDto;
 import com.deliveryManPlus.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping("/admin/category")
-    public ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDto dto) {
+    public ResponseEntity<Void> createCategory(@RequestBody CategoryCreateRequestDto dto) {
         categoryService.createCategory(dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -53,7 +53,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PatchMapping("/admin/category/{categoryId}")
-    public ResponseEntity<Void> updateCategory(@PathVariable(name = "categoryId") Long categoryId, @Valid @RequestBody CategoryRequestDto dto) {
+    public ResponseEntity<Void> updateCategory(@PathVariable(name = "categoryId") Long categoryId, @RequestBody CategoryUpdateRequestDto dto) {
         categoryService.updateCategory(categoryId, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

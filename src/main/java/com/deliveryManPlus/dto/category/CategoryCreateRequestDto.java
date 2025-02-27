@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "카테고리 생성 요청")
 @NoArgsConstructor
 @Getter
-public class CategoryRequestDto {
+public class CategoryCreateRequestDto {
     @Schema(description = "카테고리 이름", example = "한식")
     @NotBlank
     private String name;

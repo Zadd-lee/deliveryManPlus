@@ -2,9 +2,10 @@ package com.deliveryManPlus.service.imp;
 
 import com.deliveryManPlus.constant.Status;
 import com.deliveryManPlus.constant.error.CategoryErrorCode;
-import com.deliveryManPlus.dto.category.CategoryRequestDto;
+import com.deliveryManPlus.dto.category.CategoryCreateRequestDto;
 import com.deliveryManPlus.dto.category.CategoryResponseDto;
 import com.deliveryManPlus.dto.category.CategorySearchRequestDto;
+import com.deliveryManPlus.dto.category.CategoryUpdateRequestDto;
 import com.deliveryManPlus.entity.Category;
 import com.deliveryManPlus.exception.ApiException;
 import com.deliveryManPlus.repository.CategoryRepository;
@@ -23,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void createCategory(CategoryRequestDto dto) {
+    public void createCategory(CategoryCreateRequestDto dto) {
         //검증
         if(categoryRepository.existsByName(dto.getName())) {
             throw new ApiException(CategoryErrorCode.DUPLICATED_NAME);
@@ -53,9 +54,25 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public void updateCategory(Long categoryId, CategoryRequestDto dto) {
+    public void updateCategory(Long categoryId, CategoryUpdateRequestDto dto) {
         //검증
         Category category = categoryRepository.findByIdOrElseThrows(categoryId);
+
+        //todo 리팩토링 필요
+        if (category.getStatus() != Status.DELETED) {
+            if (dto.getName() != null) {
+                category.updateName(dto.getName());
+            }
+        } else {
+            if (dto.getStatus() != null) {
+                category.updateStatus(dto.getStatus());
+                if (dto.getName() != null) {
+                    category.updateName(dto.getName());
+                }
+            } else {
+                throw new ApiException(CategoryErrorCode.NOT_VALUABLE);
+            }
+        }
         category.updateName(dto.getName());
     }
 
@@ -64,6 +81,6 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Long categoryId) {
         //검증
         Category category = categoryRepository.findByIdOrElseThrows(categoryId);
-        category.delete();
+        category.updateStatus(Status.DELETED);
     }
 }

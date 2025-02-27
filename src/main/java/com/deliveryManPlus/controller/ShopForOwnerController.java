@@ -27,6 +27,7 @@ public class ShopForOwnerController {
             ,responses = {
             @ApiResponse(responseCode = "201", description = "생성 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "404", description = "카테고리 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping
@@ -41,6 +42,7 @@ public class ShopForOwnerController {
             ,responses = {
             @ApiResponse(responseCode = "200", description = "수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "404", description = "카테고리 없음"),
             @ApiResponse(responseCode = "404", description = "상점 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })

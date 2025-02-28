@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/owner/{shopId}/menu/{menuId}")
+@RequestMapping("/owner/{shopId}/menu/{menuId}/menuOption")
 @RequiredArgsConstructor
 public class MenuOptionController {
     private final MenuOptionService service;

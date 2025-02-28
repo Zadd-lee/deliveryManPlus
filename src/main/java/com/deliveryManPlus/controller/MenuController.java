@@ -1,9 +1,6 @@
 package com.deliveryManPlus.controller;
 
-import com.deliveryManPlus.dto.menu.MenuCreateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuSimpleResponseDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateStatusRequestDto;
+import com.deliveryManPlus.dto.menu.*;
 import com.deliveryManPlus.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -93,5 +90,12 @@ public class MenuController {
                                        @PathVariable Long menuId) {
         menuService.delete(shopId, menuId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
+    @GetMapping("/shop/{shopId}/menu/{menuId}")
+    public ResponseEntity<MenuDetailResponseDto> findById(@PathVariable(name = "shopId") Long shopId, @PathVariable(name = "menuId") Long menuId) {
+        return new ResponseEntity<>(menuService.findById(shopId, menuId), HttpStatus.OK);
     }
 }

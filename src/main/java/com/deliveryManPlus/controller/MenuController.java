@@ -93,7 +93,16 @@ public class MenuController {
     }
 
 
-
+    @Operation(summary = "메뉴 조회", description = "메뉴를 조회합니다."
+            ,responses = {
+            @ApiResponse(responseCode = "200", description = "메뉴 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "가게를 찾을 수 없음"),
+            @ApiResponse(responseCode = "404", description = "메뉴를 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    }, parameters = {
+        @Parameter(name = "shopId", description = "가게 ID", required = true, example = "1"),
+        @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
+    })
     @GetMapping("/shop/{shopId}/menu/{menuId}")
     public ResponseEntity<MenuDetailResponseDto> findById(@PathVariable(name = "shopId") Long shopId, @PathVariable(name = "menuId") Long menuId) {
         return new ResponseEntity<>(menuService.findById(shopId, menuId), HttpStatus.OK);

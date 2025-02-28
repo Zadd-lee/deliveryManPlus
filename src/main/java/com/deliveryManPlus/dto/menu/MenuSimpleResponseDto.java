@@ -8,14 +8,14 @@ import java.math.BigDecimal;
 
 @Getter
 @NoArgsConstructor
-public class MenuResponseDto {
+public class MenuSimpleResponseDto {
 
     private Long id;
     private String name;
     private String context;
     private BigDecimal price;
 
-    public MenuResponseDto(Menu menu) {
+    public MenuSimpleResponseDto(Menu menu) {
         this.id = menu.getId();
         this.name = menu.getName();
         this.context = menu.getContext();

@@ -60,7 +60,7 @@ public class OrderController {
             @Parameter(name = "shopId", description = "식당 식별자", required = true, example = "1")
     })
     @GetMapping("/owner/{shopId}/order")
-    public ResponseEntity<List<OrderResponseDto>> findOrderForOwner(@PathVariable Long shopId) {
+    public ResponseEntity<List<OrderResponseDto>> findOrderForOwner(@PathVariable(name = "shopId") Long shopId) {
         List<OrderResponseDto> orderResponseDtos = orderService.findOrderForOwner(shopId);
         return new ResponseEntity<>(orderResponseDtos, HttpStatus.OK);
     }
@@ -77,8 +77,8 @@ public class OrderController {
     })
     @PutMapping("/owner/{shopId}/order/{orderId}")
     public ResponseEntity<OrderResponseDto> updateStatus(@AuthenticationPrincipal UserDetailsImp userDetailsImp,
-                                                         @PathVariable Long shopId,
-                                                         @PathVariable Long orderId,
+                                                         @PathVariable(name = "shopId") Long shopId,
+                                                         @PathVariable(name = "orderId") Long orderId,
                                                          @Valid @RequestBody OrderStatusUpdateDto dto) {
         OrderResponseDto orderResponseDto = orderService.updateStatus(shopId, orderId, dto);
         return new ResponseEntity<>(orderResponseDto, HttpStatus.OK);
@@ -95,8 +95,8 @@ public class OrderController {
             @Parameter(name = "orderId", description = "주문 식별자", required = true, example = "1")
     })
     @DeleteMapping("/owner/{shopId}/order/{orderId}")
-    public ResponseEntity<Void> reject(@PathVariable Long shopId,
-                                       @PathVariable Long orderId,
+    public ResponseEntity<Void> reject(@PathVariable(name = "shopId") Long shopId,
+                                       @PathVariable(name = "orderId") Long orderId,
                                        @Valid @RequestBody OrderStatusRejectDto dto) {
         orderService.reject(shopId, orderId, dto);
         return new ResponseEntity<>(HttpStatus.OK);

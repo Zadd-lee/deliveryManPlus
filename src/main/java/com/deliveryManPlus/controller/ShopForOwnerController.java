@@ -48,7 +48,7 @@ public class ShopForOwnerController {
     })
     @PutMapping("/{shopId}")
     public ResponseEntity<ShopDetailResponseDto> updateShop(@Parameter(name = "상점id"
-            ,description = "상점 식별자",in = ParameterIn.PATH,required = true,example = "1") @PathVariable Long shopId,
+            ,description = "상점 식별자",in = ParameterIn.PATH,required = true,example = "1") @PathVariable(name = "shopId") Long shopId,
                                                             @Valid @RequestBody ShopUpdateRequestDto dto) {
 
         ShopDetailResponseDto responseDto =shopService.updateShop(shopId, dto);
@@ -63,10 +63,12 @@ public class ShopForOwnerController {
             @ApiResponse(responseCode = "404", description = "상점 없음"),
             @ApiResponse(responseCode = "406", description = "상태 변경 불가"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
+    }
+    ,parameters = {
+            @Parameter(name = "shopId", description = "상점 식별자", required = true, example = "1")
     })
     @PatchMapping("/{shopId}")
-    public ResponseEntity<ShopDetailResponseDto> updateStatus(@Parameter(name = "상점 id",description = "상점 식별자"
-            ,in = ParameterIn.PATH,example = "1")@PathVariable Long shopId,
+    public ResponseEntity<ShopDetailResponseDto> updateStatus(@PathVariable(name = "shopId") Long shopId,
                                                               @Valid @RequestBody ShopStatusRequestDto status) {
         ShopDetailResponseDto dto = shopService.updateShopStatus(shopId, status.getStatus());
         return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -77,9 +79,11 @@ public class ShopForOwnerController {
             @ApiResponse(responseCode = "200", description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "상점 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
+    }, parameters = {
+            @Parameter(name = "shopId", description = "상점 식별자", required = true, example = "1")
     })
     @DeleteMapping("/{shopId}")
-    public ResponseEntity<Void> delete(@Parameter(name = "상점 id",description = "상점 식별자",in = ParameterIn.PATH) @PathVariable Long shopId) {
+    public ResponseEntity<Void> delete(@PathVariable(name = "shopId") Long shopId) {
         shopService.deleteShop(shopId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

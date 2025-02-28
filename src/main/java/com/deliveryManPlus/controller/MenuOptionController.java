@@ -16,7 +16,7 @@ public class MenuOptionController {
     private final MenuOptionService service;
 
     @PostMapping
-    public ResponseEntity<Void> createMenuOptions(@PathVariable("shopId") Long shopId
+    public ResponseEntity<Void> createMenuOptions(@PathVariable(name = "shopId") Long shopId
             , @PathVariable("menuId") Long menuId
             , @RequestBody List<MenuOptionRequestDto> dtoList) {
         service.createMenuOptions(shopId, menuId, dtoList);
@@ -24,7 +24,7 @@ public class MenuOptionController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteAllByMenuId(@PathVariable("shopId") Long shopId
+    public ResponseEntity<String> deleteAllByMenuId(@PathVariable(name = "shopId") Long shopId
             , @PathVariable("menuId") Long menuId) {
         service.deleteById(menuId);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -2,17 +2,14 @@ package com.deliveryManPlus.service.imp;
 
 import com.deliveryManPlus.constant.error.MenuErrorCode;
 import com.deliveryManPlus.constant.error.MenuOptionErrorCode;
-import com.deliveryManPlus.constant.error.ShopErrorCode;
 import com.deliveryManPlus.dto.menuOption.MenuOptionDto;
 import com.deliveryManPlus.entity.Menu;
 import com.deliveryManPlus.entity.MenuOption;
 import com.deliveryManPlus.entity.MenuOptionDetail;
-import com.deliveryManPlus.entity.Shop;
 import com.deliveryManPlus.exception.ApiException;
 import com.deliveryManPlus.repository.MenuOptionDetailRepository;
 import com.deliveryManPlus.repository.MenuOptionRepository;
 import com.deliveryManPlus.repository.MenuRepository;
-import com.deliveryManPlus.repository.ShopRepository;
 import com.deliveryManPlus.service.MenuOptionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.deliveryManPlus.utils.EntityValidator.validate;
-
 @Service
 @RequiredArgsConstructor
 public class MenuOptionServiceImpl implements MenuOptionService {
-    private final ShopRepository shopRepository;
     private final MenuRepository menuRepository;
     private final MenuOptionRepository menuOptionRepository;
     private final MenuOptionDetailRepository menuOptionDetailRepository;
@@ -33,12 +27,8 @@ public class MenuOptionServiceImpl implements MenuOptionService {
     @Transactional
     @Override
     public void createMenuOptions(Long shopId, Long menuId, List<MenuOptionDto> dtoList) {
-        //shop에 menu 존재 여부 확인
 
-        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
         Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
-        validate(menu, shop);
-
 
         // DTO 검증
         dtoList.forEach(dto1 -> {
@@ -51,9 +41,7 @@ public class MenuOptionServiceImpl implements MenuOptionService {
         //menuOption 존재시 초기화 후 저장
         if (menuOptionRepository.existsByMenuId(menuId)) {
             deleteAllMenuOptionOfMenu(menu);
-            menu.getMenuOptionList().clear();
         }
-
 
 
         //menuOption 저장
@@ -81,15 +69,24 @@ public class MenuOptionServiceImpl implements MenuOptionService {
 
     }
 
+    @Override
+    public void deleteById(Long menuId) {
+
+        Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+
+        deleteAllMenuOptionOfMenu(menu);
+    }
+
     private void deleteAllMenuOptionOfMenu(Menu menu) {
         List<MenuOption> menuOptionList = menu.getMenuOptionList();
         //menuOption 초기화
         List<Long> menuOptionIdList = menuOptionList.stream()
-                .map(MenuOption::getMenuOptionId)
+                .map(MenuOption::getId)
                 .toList();
         menuOptionRepository.deleteAllByIds(menuOptionIdList);
         //menuOptionDetail 초기화
         menuOptionDetailRepository.deleteAllByMenuOptionId(menuOptionIdList);
+
 
         //menu list 초기화
         menu.getMenuOptionList().clear();

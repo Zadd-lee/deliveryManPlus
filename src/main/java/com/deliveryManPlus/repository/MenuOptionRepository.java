@@ -19,6 +19,6 @@ public interface MenuOptionRepository extends JpaRepository<MenuOption, Long> {
     boolean existsByMenuId(Long menuId);
 
     @Modifying
-    @Query("delete from MenuOption mo where mo.menuOptionId in :menuOptionIdList")
+    @Query("delete from MenuOption mo where mo.id in :menuOptionIdList")
     void deleteAllByIds(List<Long> menuOptionIdList);
 }

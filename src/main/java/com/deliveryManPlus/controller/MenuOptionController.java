@@ -17,10 +17,17 @@ public class MenuOptionController {
 
     @PostMapping
     public ResponseEntity<Void> createMenuOptions(@PathVariable("shopId") Long shopId
-            ,@PathVariable("menuId") Long menuId
+            , @PathVariable("menuId") Long menuId
             , @RequestBody List<MenuOptionDto> dtoList) {
-        service.createMenuOptions(shopId,menuId, dtoList);
+        service.createMenuOptions(shopId, menuId, dtoList);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteAllByMenuId(@PathVariable("shopId") Long shopId
+            , @PathVariable("menuId") Long menuId) {
+        service.deleteById(menuId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

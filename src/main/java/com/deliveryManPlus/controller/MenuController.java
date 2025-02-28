@@ -33,7 +33,7 @@ public class MenuController {
         @Parameter(name = "shopId", description = "가게 ID",in = ParameterIn.PATH, required = true, example = "1")
     })
     @PostMapping
-    public ResponseEntity<Void> create(@PathVariable Long shopId,
+    public ResponseEntity<Void> create(@PathVariable(name = "shopId") Long shopId,
                                        @Valid @RequestBody MenuCreateRequestDto dto) {
         menuService.create(shopId,dto);
         return new ResponseEntity<>(HttpStatus.CREATED);

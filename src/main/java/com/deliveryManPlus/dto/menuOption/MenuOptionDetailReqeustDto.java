@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @NoArgsConstructor
 @Getter
-public class MenuOptionDetailDto {
+public class MenuOptionDetailReqeustDto {
     @NotBlank
     private String name;
     private BigDecimal optionPrice;

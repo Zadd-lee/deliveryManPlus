@@ -2,7 +2,7 @@ package com.deliveryManPlus.service.imp;
 
 import com.deliveryManPlus.constant.error.MenuErrorCode;
 import com.deliveryManPlus.constant.error.MenuOptionErrorCode;
-import com.deliveryManPlus.dto.menuOption.MenuOptionDto;
+import com.deliveryManPlus.dto.menuOption.MenuOptionRequestDto;
 import com.deliveryManPlus.entity.Menu;
 import com.deliveryManPlus.entity.MenuOption;
 import com.deliveryManPlus.entity.MenuOptionDetail;
@@ -26,7 +26,7 @@ public class MenuOptionServiceImpl implements MenuOptionService {
 
     @Transactional
     @Override
-    public void createMenuOptions(Long shopId, Long menuId, List<MenuOptionDto> dtoList) {
+    public void createMenuOptions(Long shopId, Long menuId, List<MenuOptionRequestDto> dtoList) {
 
         Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
 

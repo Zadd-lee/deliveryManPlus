@@ -11,7 +11,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
-public class MenuOptionDto {
+public class MenuOptionRequestDto {
     @NotBlank
     private String title;
     private String content;
@@ -20,7 +20,7 @@ public class MenuOptionDto {
     private Boolean requirement;
 
     @NotNull @Valid
-    List<MenuOptionDetailDto> menuOptionDetailDtoList;
+    List<MenuOptionDetailReqeustDto> menuOptionDetailReqeustDtoList;
 
     public MenuOption toEntity() {
 
@@ -30,8 +30,8 @@ public class MenuOptionDto {
                 .selectionLimit(selectionLimit)
                 .requirement(requirement)
                 .menuOptionDetailList(
-                        menuOptionDetailDtoList.stream()
-                                .map(MenuOptionDetailDto::toEntity)
+                        menuOptionDetailReqeustDtoList.stream()
+                                .map(MenuOptionDetailReqeustDto::toEntity)
                                 .toList()
                 )
                 .build();

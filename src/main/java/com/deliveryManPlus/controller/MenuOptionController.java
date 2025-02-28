@@ -1,6 +1,6 @@
 package com.deliveryManPlus.controller;
 
-import com.deliveryManPlus.dto.menuOption.MenuOptionDto;
+import com.deliveryManPlus.dto.menuOption.MenuOptionRequestDto;
 import com.deliveryManPlus.service.MenuOptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ public class MenuOptionController {
     @PostMapping
     public ResponseEntity<Void> createMenuOptions(@PathVariable("shopId") Long shopId
             , @PathVariable("menuId") Long menuId
-            , @RequestBody List<MenuOptionDto> dtoList) {
+            , @RequestBody List<MenuOptionRequestDto> dtoList) {
         service.createMenuOptions(shopId, menuId, dtoList);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

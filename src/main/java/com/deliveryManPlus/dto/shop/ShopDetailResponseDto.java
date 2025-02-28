@@ -1,6 +1,6 @@
 package com.deliveryManPlus.dto.shop;
 
-import com.deliveryManPlus.dto.menu.MenuResponseDto;
+import com.deliveryManPlus.dto.menu.MenuSimpleResponseDto;
 import com.deliveryManPlus.entity.Menu;
 import com.deliveryManPlus.constant.ShopStatus;
 import com.deliveryManPlus.entity.Shop;
@@ -22,7 +22,7 @@ public class ShopDetailResponseDto {
     private String closedAt;
     private String closedDay;
 
-    private List<MenuResponseDto> menuList;
+    private List<MenuSimpleResponseDto> menuList;
 
 
     public ShopDetailResponseDto(Shop shop, List<Menu> menuList) {
@@ -35,7 +35,7 @@ public class ShopDetailResponseDto {
         this.closedAt= shop.getClosedAt();
         this.closedDay = shop.getClosedDay();
         this.menuList = menuList.stream()
-                .map(MenuResponseDto::new)
+                .map(MenuSimpleResponseDto::new)
                 .toList();
     }
 }

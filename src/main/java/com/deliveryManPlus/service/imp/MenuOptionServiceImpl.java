@@ -6,10 +6,12 @@ import com.deliveryManPlus.dto.menuOption.MenuOptionRequestDto;
 import com.deliveryManPlus.entity.Menu;
 import com.deliveryManPlus.entity.MenuOption;
 import com.deliveryManPlus.entity.MenuOptionDetail;
+import com.deliveryManPlus.entity.Shop;
 import com.deliveryManPlus.exception.ApiException;
 import com.deliveryManPlus.repository.MenuOptionDetailRepository;
 import com.deliveryManPlus.repository.MenuOptionRepository;
 import com.deliveryManPlus.repository.MenuRepository;
+import com.deliveryManPlus.repository.ShopRepository;
 import com.deliveryManPlus.service.MenuOptionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +19,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.deliveryManPlus.utils.EntityValidator.validate;
+
 @Service
 @RequiredArgsConstructor
 public class MenuOptionServiceImpl implements MenuOptionService {
     private final MenuRepository menuRepository;
     private final MenuOptionRepository menuOptionRepository;
     private final MenuOptionDetailRepository menuOptionDetailRepository;
+    private final ShopRepository shopRepository;
 
     @Transactional
     @Override
     public void createMenuOptions(Long shopId, Long menuId, List<MenuOptionRequestDto> dtoList) {
 
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
         Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        //검증
+        validate(shop);
+        validate(menu, shop);
 
         // DTO 검증
         dtoList.forEach(dto1 -> {
@@ -70,9 +79,14 @@ public class MenuOptionServiceImpl implements MenuOptionService {
     }
 
     @Override
-    public void deleteById(Long menuId) {
+    public void deleteById(Long shopId, Long menuId) {
 
+        Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
         Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        
+        //검증
+        validate(shop);
+        validate(menu, shop);
 
         deleteAllMenuOptionOfMenu(menu);
     }

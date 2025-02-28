@@ -48,8 +48,8 @@ public class MenuController {
         @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
     })
     @PutMapping("/owner/{shopId}/menu/{menuId}")
-    public ResponseEntity<Void> update(@PathVariable Long shopId,
-                                       @PathVariable Long menuId,
+    public ResponseEntity<Void> update(@PathVariable(name = "shopId") Long shopId,
+                                       @PathVariable(name = "menuId") Long menuId,
                                        @Valid @RequestBody MenuUpdateRequestDto dto) {
         menuService.update(shopId, menuId, dto);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -67,8 +67,8 @@ public class MenuController {
         @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
     })
     @PatchMapping("/owner/{shopId}/menu/{menuId}")
-    public ResponseEntity<Void> updateStatus(@PathVariable Long shopId,
-                                       @PathVariable Long menuId,
+    public ResponseEntity<Void> updateStatus(@PathVariable(name = "shopId") Long shopId,
+                                       @PathVariable(name = "menuId") Long menuId,
                                        @Valid @RequestBody MenuUpdateStatusRequestDto dto) {
         menuService.updateStatus(shopId, menuId, dto);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -86,8 +86,8 @@ public class MenuController {
         @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
     })
     @DeleteMapping("/owner/{shopId}/menu/{menuId}")
-    public ResponseEntity<Void> delete(@PathVariable Long shopId,
-                                       @PathVariable Long menuId) {
+    public ResponseEntity<Void> delete(@PathVariable(name = "shopId") Long shopId,
+                                       @PathVariable(name = "menuId") Long menuId) {
         menuService.delete(shopId, menuId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

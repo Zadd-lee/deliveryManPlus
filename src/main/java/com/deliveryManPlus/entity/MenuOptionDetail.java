@@ -29,4 +29,8 @@ public class MenuOptionDetail extends CreateDateEntity{
         this.name = name;
         this.optionPrice = optionPrice;
     }
+
+    public void updateMenuOption(MenuOption menuOption) {
+        this.menuOption = menuOption;
+    }
 }

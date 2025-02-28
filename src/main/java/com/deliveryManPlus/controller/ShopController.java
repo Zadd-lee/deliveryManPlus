@@ -45,7 +45,7 @@ public class ShopController {
             @Parameter(name = "shopId", description = "상점 식별자", required = true, example = "1")
     })
     @GetMapping("/{shopId}")
-    public ResponseEntity<ShopDetailResponseDto> findById(@PathVariable Long shopId){
+    public ResponseEntity<ShopDetailResponseDto> findById(@PathVariable(name = "shopId") Long shopId){
         ShopDetailResponseDto dto = shopService.findById(shopId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

@@ -4,9 +4,7 @@ import com.deliveryManPlus.constant.ShopStatus;
 import com.deliveryManPlus.constant.error.MenuErrorCode;
 import com.deliveryManPlus.constant.error.MenuStatus;
 import com.deliveryManPlus.constant.error.ShopErrorCode;
-import com.deliveryManPlus.dto.menu.MenuCreateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateStatusRequestDto;
+import com.deliveryManPlus.dto.menu.*;
 import com.deliveryManPlus.entity.Menu;
 import com.deliveryManPlus.entity.Shop;
 import com.deliveryManPlus.exception.ApiException;
@@ -91,6 +89,16 @@ public class MenuServiceImp implements MenuService {
         validate(menu, shop);
         
         menu.updateStatus(MenuStatus.NOT_USE);
+    }
+
+    @Override
+    public MenuDetailResponseDto findById(Long shopId, Long menuId) {
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        //검증
+        validate(menu, shopRepository.findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND)));
+        return new MenuDetailResponseDto(menu);
     }
 
 }

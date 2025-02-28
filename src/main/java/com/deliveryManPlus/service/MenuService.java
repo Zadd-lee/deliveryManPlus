@@ -1,8 +1,6 @@
 package com.deliveryManPlus.service;
 
-import com.deliveryManPlus.dto.menu.MenuCreateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateStatusRequestDto;
+import com.deliveryManPlus.dto.menu.*;
 import jakarta.validation.Valid;
 
 public interface MenuService {
@@ -13,4 +11,6 @@ public interface MenuService {
     void updateStatus(Long shopId, Long menuId, MenuUpdateStatusRequestDto dto);
 
     void delete(Long shopId, Long menuId);
+
+    MenuDetailResponseDto findById(Long shopId, Long menuId);
 }

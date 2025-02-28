@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +28,9 @@ public class Menu extends CreateAndUpdateDateEntity {
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    @OneToMany(mappedBy = "menu")
+    private List<MenuOption> menuOptionList;
 
     @Builder
     public Menu(String name, String context, BigDecimal price, MenuStatus status, Shop shop) {

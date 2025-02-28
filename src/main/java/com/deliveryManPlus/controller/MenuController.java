@@ -1,8 +1,6 @@
 package com.deliveryManPlus.controller;
 
-import com.deliveryManPlus.dto.menu.MenuCreateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateRequestDto;
-import com.deliveryManPlus.dto.menu.MenuUpdateStatusRequestDto;
+import com.deliveryManPlus.dto.menu.*;
 import com.deliveryManPlus.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Menu", description = "메뉴 API")
 @RestController
-@RequestMapping("/owner/{shopId}/menu")
 @RequiredArgsConstructor
 public class MenuController {
     private final MenuService menuService;
@@ -32,8 +29,8 @@ public class MenuController {
     ,parameters = {
         @Parameter(name = "shopId", description = "가게 ID",in = ParameterIn.PATH, required = true, example = "1")
     })
-    @PostMapping
-    public ResponseEntity<Void> create(@PathVariable Long shopId,
+    @PostMapping("/owner/{shopId}/menu")
+    public ResponseEntity<Void> create(@PathVariable(name = "shopId") Long shopId,
                                        @Valid @RequestBody MenuCreateRequestDto dto) {
         menuService.create(shopId,dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -50,7 +47,7 @@ public class MenuController {
         @Parameter(name = "shopId", description = "가게 ID", required = true, example = "1"),
         @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
     })
-    @PutMapping("/{menuId}")
+    @PutMapping("/owner/{shopId}/menu/{menuId}")
     public ResponseEntity<Void> update(@PathVariable Long shopId,
                                        @PathVariable Long menuId,
                                        @Valid @RequestBody MenuUpdateRequestDto dto) {
@@ -69,7 +66,7 @@ public class MenuController {
         @Parameter(name = "shopId", description = "가게 ID", required = true, example = "1"),
         @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
     })
-    @PatchMapping("/{menuId}")
+    @PatchMapping("/owner/{shopId}/menu/{menuId}")
     public ResponseEntity<Void> updateStatus(@PathVariable Long shopId,
                                        @PathVariable Long menuId,
                                        @Valid @RequestBody MenuUpdateStatusRequestDto dto) {
@@ -88,10 +85,26 @@ public class MenuController {
         @Parameter(name = "shopId", description = "가게 ID", required = true, example = "1"),
         @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
     })
-    @DeleteMapping("/{menuId}")
+    @DeleteMapping("/owner/{shopId}/menu/{menuId}")
     public ResponseEntity<Void> delete(@PathVariable Long shopId,
                                        @PathVariable Long menuId) {
         menuService.delete(shopId, menuId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "메뉴 조회", description = "메뉴를 조회합니다."
+            ,responses = {
+            @ApiResponse(responseCode = "200", description = "메뉴 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "가게를 찾을 수 없음"),
+            @ApiResponse(responseCode = "404", description = "메뉴를 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    }, parameters = {
+        @Parameter(name = "shopId", description = "가게 ID", required = true, example = "1"),
+        @Parameter(name = "menuId", description = "메뉴 ID", required = true, example = "1")
+    })
+    @GetMapping("/shop/{shopId}/menu/{menuId}")
+    public ResponseEntity<MenuDetailResponseDto> findById(@PathVariable(name = "shopId") Long shopId, @PathVariable(name = "menuId") Long menuId) {
+        return new ResponseEntity<>(menuService.findById(shopId, menuId), HttpStatus.OK);
     }
 }

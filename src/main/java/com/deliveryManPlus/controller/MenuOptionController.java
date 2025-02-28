@@ -51,7 +51,7 @@ public class MenuOptionController {
     @DeleteMapping
     public ResponseEntity<String> deleteAllByMenuId(@PathVariable(name = "shopId") Long shopId
             , @PathVariable("menuId") Long menuId) {
-        service.deleteById(menuId);
+        service.deleteById(shopId,menuId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

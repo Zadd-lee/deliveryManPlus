@@ -34,7 +34,7 @@ public class MenuOptionServiceImpl implements MenuOptionService {
     public void createMenuOptions(Long shopId, Long menuId, List<MenuOptionRequestDto> dtoList) {
 
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
-        Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        Menu menu = menuRepository.findByIdOrElseThrows(menuId);
         //검증
         validate(shop);
         validate(menu, shop);
@@ -82,7 +82,7 @@ public class MenuOptionServiceImpl implements MenuOptionService {
     public void deleteById(Long shopId, Long menuId) {
 
         Shop shop = shopRepository.findById(shopId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
-        Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        Menu menu = menuRepository.findByIdOrElseThrows(menuId);
         
         //검증
         validate(shop);

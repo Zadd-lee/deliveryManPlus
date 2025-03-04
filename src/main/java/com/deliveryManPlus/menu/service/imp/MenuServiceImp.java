@@ -1,19 +1,18 @@
 package com.deliveryManPlus.menu.service.imp;
 
-import com.deliveryManPlus.shop.constant.ShopStatus;
-import com.deliveryManPlus.common.exception.constant.errorcode.MenuErrorCode;
+import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuStatus;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
-import com.deliveryManPlus.menu.entity.Menu;
-import com.deliveryManPlus.shop.entity.Shop;
-import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.menu.dto.menu.MenuCreateRequestDto;
 import com.deliveryManPlus.menu.dto.menu.MenuDetailResponseDto;
 import com.deliveryManPlus.menu.dto.menu.MenuUpdateRequestDto;
 import com.deliveryManPlus.menu.dto.menu.MenuUpdateStatusRequestDto;
+import com.deliveryManPlus.menu.entity.Menu;
 import com.deliveryManPlus.menu.repository.MenuRepository;
-import com.deliveryManPlus.shop.repository.ShopRepository;
 import com.deliveryManPlus.menu.service.MenuService;
+import com.deliveryManPlus.shop.constant.ShopStatus;
+import com.deliveryManPlus.shop.entity.Shop;
+import com.deliveryManPlus.shop.repository.ShopRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,8 +53,7 @@ public class MenuServiceImp implements MenuService {
         Shop shop = shopRepository.findById(menuId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
-        Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        Menu menu = menuRepository.findByIdOrElseThrows(menuId);
 
         validate(shop);
         validate(menu, shop);
@@ -70,8 +68,7 @@ public class MenuServiceImp implements MenuService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
-        Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        Menu menu = menuRepository.findByIdOrElseThrows(menuId);
 
         validate(shop);
         validate(menu, shop);
@@ -85,8 +82,7 @@ public class MenuServiceImp implements MenuService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
 
-        Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        Menu menu = menuRepository.findByIdOrElseThrows(menuId);
 
         validate(shop);
         validate(menu, shop);
@@ -96,8 +92,7 @@ public class MenuServiceImp implements MenuService {
 
     @Override
     public MenuDetailResponseDto findById(Long shopId, Long menuId) {
-        Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        Menu menu = menuRepository.findByIdOrElseThrows(menuId);
         //검증
         validate(menu, shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND)));

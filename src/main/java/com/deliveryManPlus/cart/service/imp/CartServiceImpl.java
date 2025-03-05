@@ -3,6 +3,7 @@ package com.deliveryManPlus.cart.service.imp;
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.cart.dto.CartCreateMenuDto;
 import com.deliveryManPlus.cart.dto.CartMenuOptionRequestDto;
+import com.deliveryManPlus.cart.dto.CartResponseDto;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.cart.entity.CartMenuOptionDetail;
@@ -11,6 +12,7 @@ import com.deliveryManPlus.cart.repository.CartMenuRepository;
 import com.deliveryManPlus.cart.repository.CartRepository;
 import com.deliveryManPlus.cart.service.CartService;
 import com.deliveryManPlus.common.exception.ApiException;
+import com.deliveryManPlus.common.exception.constant.errorcode.CartErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.entity.Menu;
@@ -102,5 +104,20 @@ public class CartServiceImpl implements CartService {
             cartMenuRepository.deleteAll(cartMenuList);
             cartMenuList.clear();
         }
+    }
+
+    @Override
+    public CartResponseDto findCartList() {
+        User user = getUser();
+
+        //cart 는 개인당 하나 지정
+        //cart 가 1개 이상인 경우 최신 cart 를 선택
+        Cart cart = cartRepository.getCartsByCustomerId(user.getId())
+                .stream()
+                .max(Comparator.comparing(Cart::getCreatedAt))
+                .orElseThrow(() -> new ApiException(CartErrorCode.NOT_FOUND));
+
+        return new CartResponseDto(cart);
+
     }
 }

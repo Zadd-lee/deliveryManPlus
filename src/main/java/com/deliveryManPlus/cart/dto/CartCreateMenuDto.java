@@ -3,7 +3,6 @@ package com.deliveryManPlus.cart.dto;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.menu.entity.Menu;
-import com.deliveryManPlus.menu.entity.MenuOptionDetail;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -25,11 +24,10 @@ public class CartCreateMenuDto {
     @NotNull
     private int quantity;
 
-    public CartMenu toEntity(Menu menu, Cart cart, List<MenuOptionDetail> menuOptionDetailList) {
+    public CartMenu toEntity(Menu menu, Cart cart) {
         return CartMenu.builder()
                 .menu(menu)
                 .cart(cart)
-                .menuOptionDetailList(menuOptionDetailList)
                 .quantity(this.quantity)
                 .build();
     }

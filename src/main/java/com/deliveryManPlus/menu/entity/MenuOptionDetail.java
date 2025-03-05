@@ -1,6 +1,5 @@
 package com.deliveryManPlus.menu.entity;
 
-import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.common.entity.CreateDateEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -25,19 +24,14 @@ public class MenuOptionDetail extends CreateDateEntity {
     @JoinColumn(name = "menu_option_id")
     private MenuOption menuOption;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_menu_id")
-    private CartMenu cartMenu;
-
-
-    @Builder
-    public MenuOptionDetail(Long id, String name, BigDecimal optionPrice) {
-        this.id = id;
-        this.name = name;
-        this.optionPrice = optionPrice;
+    public void updateMenuOption(MenuOption menuOption) {
+        this.menuOption = menuOption;
     }
 
-    public void updateMenuOption(MenuOption menuOption) {
+    @Builder
+    public MenuOptionDetail(String name, BigDecimal optionPrice, MenuOption menuOption) {
+        this.name = name;
+        this.optionPrice = optionPrice;
         this.menuOption = menuOption;
     }
 }

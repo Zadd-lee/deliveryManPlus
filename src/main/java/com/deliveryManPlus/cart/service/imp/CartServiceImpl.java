@@ -5,13 +5,14 @@ import com.deliveryManPlus.cart.dto.CartCreateMenuDto;
 import com.deliveryManPlus.cart.dto.CartMenuOptionRequestDto;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.cart.entity.CartMenu;
+import com.deliveryManPlus.cart.entity.CartMenuOptionDetail;
+import com.deliveryManPlus.cart.repository.CartMenuOptionDetailRepository;
 import com.deliveryManPlus.cart.repository.CartMenuRepository;
 import com.deliveryManPlus.cart.repository.CartRepository;
 import com.deliveryManPlus.cart.service.CartService;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
-import com.deliveryManPlus.common.utils.SecurityUtils;
 import com.deliveryManPlus.menu.entity.Menu;
 import com.deliveryManPlus.menu.repository.MenuOptionDetailRepository;
 import com.deliveryManPlus.menu.repository.MenuOptionRepository;
@@ -25,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static com.deliveryManPlus.common.utils.EntityValidator.isValid;
+import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +37,14 @@ public class CartServiceImpl implements CartService {
     private final MenuOptionRepository menuOptionRepository;
     private final MenuOptionDetailRepository menuOptionDetailRepository;
     private final CartMenuRepository cartMenuRepository;
+    private final CartMenuOptionDetailRepository cartMenuOptionDetailRepository;
 
     @Transactional
     @Override
     public void addCartMenu(Long shopId, Long menuId, CartCreateMenuDto dto) {
         //검증
         //user validate
-        User user = SecurityUtils.getUser();
+        User user = getUser();
         //shop validate
         if (!shopRepository.existsById(shopId)) {
             throw new ApiException(ShopErrorCode.NOT_FOUND);
@@ -75,13 +78,23 @@ public class CartServiceImpl implements CartService {
         //menu의 shop 과 새로 생성되는 menu의 shop이 다를 경우 cart 초기화
         validCartAndShopId(shopId, cart);
 
-        //dto와 cart menu가 동일하다면 quantity 증가
-        CartMenu newCartMenu = dto.toEntity(menu, cart
-                , menuOptionDetailRepository.findAllById(dto.getAllCartMenuOptionDtoList()));
+        //todo dto와 cart menu가 동일하다면 quantity 증가
 
+        CartMenu newCartMenu = dto.toEntity(menu, cart);
+
+        //cart menu option detail 저장
+        List<CartMenuOptionDetail> cartMenuOptionDetailList = menuOptionDetailRepository.findAllById(dto.getAllCartMenuOptionDtoList())
+                .stream()
+                .map(x -> new CartMenuOptionDetail(newCartMenu, x))
+                .toList();
+        cartMenuOptionDetailRepository.saveAll(cartMenuOptionDetailList);
+
+
+        newCartMenu.updateMenuOptionDetailList(cartMenuOptionDetailList);
 
         cartMenuRepository.save(newCartMenu);
     }
+
     //menu의 shop 과 새로 생성되는 menu의 shop이 다를 경우 cart 초기화
     private void validCartAndShopId(Long shopId, Cart cart) {
         if (!isValid(shopId, cart)) {

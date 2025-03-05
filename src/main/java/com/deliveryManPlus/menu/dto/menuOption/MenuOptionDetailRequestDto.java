@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Schema(description = "메뉴 옵션 상세 생성 요청")
 @NoArgsConstructor
 @Getter
-public class MenuOptionDetailReqeustDto {
+public class MenuOptionDetailRequestDto {
     @Schema(description = "메뉴 옵션 상세 제목", example = "매우 매움 쓰읍하")
     @NotBlank
     private String name;

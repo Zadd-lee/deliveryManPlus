@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,9 @@ public class Cart extends CreateDateEntity {
     @Builder
     public Cart(User customer) {
         this.customer = customer;
+    }
+    public LocalDateTime getCreatedAt() {
+        return super.getCreatedAt();
     }
 
 

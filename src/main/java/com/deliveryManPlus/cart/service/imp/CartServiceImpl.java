@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static com.deliveryManPlus.common.utils.EntityValidator.isValid;
@@ -39,31 +40,16 @@ public class CartServiceImpl implements CartService {
     @Override
     public void addCartMenu(Long shopId, Long menuId, CartCreateMenuDto dto) {
         //검증
+        //user validate
         User user = SecurityUtils.getUser();
-        List<Cart> cartsByCustomerId = cartRepository.getCartsByCustomerId(user.getId());
-        Cart cart = null;
-        if (cartsByCustomerId.isEmpty()) {
-            cart = Cart.builder()
-                    .customer(user)
-                    .build();
-            cartRepository.save(cart);
-        } else {
-            cart = cartsByCustomerId.get(0);
-            if (!isValid(shopId, cart)) {
-                //todo list clear 시 하위 데이터 delete 되는지 확인 필요
-                cart.getCartMenuList().clear();
-            }
-        }
-
         //shop validate
         if (!shopRepository.existsById(shopId)) {
             throw new ApiException(ShopErrorCode.NOT_FOUND);
         }
-
         //menu validate
         Menu menu = menuRepository.findUseMenuByIdOrElseThrows(menuId);
 
-        //menuOption validate
+        //dto validate
         dto.getCartMenuOptionDtoList()
                 .stream()
                 .map(CartMenuOptionRequestDto::getMenuOptionId)
@@ -75,12 +61,33 @@ public class CartServiceImpl implements CartService {
                         }
                 );
 
-        List<Long> cartMenuOptionDetailIdList = dto.getAllCartMenuOptionDtoList();
+        //cart가 여러개 일 경우 최신 cart, 없을 경우 새로운 cart 생성후 db에 저장
+        Cart cart = cartRepository.getCartsByCustomerId(user.getId()).stream()
+                .max(Comparator.comparing(Cart::getCreatedAt))
+                .orElseGet(() -> {
+                    Cart newCart = Cart.builder()
+                            .customer(user)
+                            .build();
+                    cartRepository.save(newCart);
+                    return newCart;
+                });
 
+        //menu의 shop 과 새로 생성되는 menu의 shop이 다를 경우 cart 초기화
+        validCartAndShopId(shopId, cart);
+
+        //dto와 cart menu가 동일하다면 quantity 증가
         CartMenu newCartMenu = dto.toEntity(menu, cart
-                , menuOptionDetailRepository.findAllById(cartMenuOptionDetailIdList));
+                , menuOptionDetailRepository.findAllById(dto.getAllCartMenuOptionDtoList()));
 
 
         cartMenuRepository.save(newCartMenu);
+    }
+    //menu의 shop 과 새로 생성되는 menu의 shop이 다를 경우 cart 초기화
+    private void validCartAndShopId(Long shopId, Cart cart) {
+        if (!isValid(shopId, cart)) {
+            List<CartMenu> cartMenuList = cart.getCartMenuList();
+            cartMenuRepository.deleteAll(cartMenuList);
+            cartMenuList.clear();
+        }
     }
 }

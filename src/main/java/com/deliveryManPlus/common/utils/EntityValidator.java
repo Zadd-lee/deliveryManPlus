@@ -52,6 +52,9 @@ public class EntityValidator {
 
     public static boolean isValid(Long shopId, Cart cart) {
         //todo 연관관계 너무 길어짐 관련 사항 리팩토링 필요
-        return cart.getCartMenuList().get(0).getMenu().getShop().getId().equals(shopId);
+        return cart.getCartMenuList().stream()
+                .findFirst()
+                .map(cartMenu -> cartMenu.getMenu().getShop().getId().equals(shopId))
+                .orElse(true);
     }
 }

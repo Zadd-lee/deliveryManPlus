@@ -12,4 +12,7 @@ public interface CartService {
     void updateCartMenuOptionDetail(Long menuId, CartMenuOptionDetailRequestDto dto);
 
     void updateCartMenuQuantity(Long menuId, int quantity);
+
+    void deleteCartMenu(Long menuId);
+
 }

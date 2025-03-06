@@ -215,4 +215,11 @@ public class CartServiceImpl implements CartService {
             throw new ApiException(errorCode);
         }
     }
+
+    @Transactional
+    @Override
+    public void deleteCartMenu(Long menuId) {
+        cartMenuOptionDetailRepository.deleteByMenuIdAndCustomerId(menuId,getUser().getId());
+        cartMenuRepository.deleteByMenuAndCustomerId(menuId,getUser().getId());
+    }
 }

@@ -162,6 +162,23 @@ public class CartServiceImpl implements CartService {
 
     }
 
+    @Transactional
+    @Override
+    public void updateCartMenuQuantity(Long menuId, int quantity) {
+        List<Cart> cartsByCustomerId = cartRepository.getCartsByCustomerId(getUser().getId());
+
+        Cart cart = cartsByCustomerId.stream()
+                .max(Comparator.comparing(Cart::getCreatedAt))
+                .orElseThrow(() -> new ApiException(CartErrorCode.NOT_FOUND));
+
+        CartMenu cartMenu = cart.getCartMenuList().stream()
+                .filter(x -> x.getMenu().getId().equals(menuId))
+                .findFirst()
+                .orElseThrow(() -> new ApiException(CartErrorCode.MENU_NOT_FOUND));
+
+        cartMenu.updateQuantity(quantity);
+    }
+
     private static void validateMenuOptionDetail(CartMenuOptionDetailRequestDto dto, Menu menu) {
         if (dto.getCartMenuOptionDetailIdList().isEmpty()) {
             return;

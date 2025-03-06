@@ -10,4 +10,6 @@ public interface CartService {
     CartResponseDto findCartList();
 
     void updateCartMenuOptionDetail(Long menuId, CartMenuOptionDetailRequestDto dto);
+
+    void updateCartMenuQuantity(Long menuId, int quantity);
 }

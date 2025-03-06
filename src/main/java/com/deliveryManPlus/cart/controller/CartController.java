@@ -1,6 +1,7 @@
 package com.deliveryManPlus.cart.controller;
 
 import com.deliveryManPlus.cart.dto.CartMenuOptionDetailRequestDto;
+import com.deliveryManPlus.cart.dto.CartMenuQuantityRequestDto;
 import com.deliveryManPlus.cart.dto.CartMenuRequestDto;
 import com.deliveryManPlus.cart.dto.CartResponseDto;
 import com.deliveryManPlus.cart.service.CartService;
@@ -31,6 +32,13 @@ public class CartController {
     public ResponseEntity<Void> updateCartMenu(@PathVariable(name = "menuId") Long menuId
             , @RequestBody CartMenuOptionDetailRequestDto dto) {
         cartService.updateCartMenuOptionDetail(menuId, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/user/cart/menu/{menuId}")
+    public ResponseEntity<Void> deleteCartMenu(@PathVariable(name = "menuId") Long menuId
+    ,@RequestBody CartMenuQuantityRequestDto dto) {
+        cartService.updateCartMenuQuantity(menuId,dto.getQuantity());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

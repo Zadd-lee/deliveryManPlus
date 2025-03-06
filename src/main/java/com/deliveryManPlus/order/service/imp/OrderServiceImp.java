@@ -2,7 +2,7 @@ package com.deliveryManPlus.order.service.imp;
 
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.auth.repository.UserRepository;
-import com.deliveryManPlus.common.exception.constant.errorcode.MenuErrorCode;
+import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.entity.Menu;
@@ -13,7 +13,6 @@ import com.deliveryManPlus.order.dto.OrderCreateRequestDto;
 import com.deliveryManPlus.order.dto.OrderResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
-import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.entity.OrderMenu;
 import com.deliveryManPlus.order.repository.OrderMenuRepository;
@@ -46,8 +45,7 @@ public class OrderServiceImp implements OrderService {
     @Override
     public void createOrder(User user, @Valid OrderCreateRequestDto dto) {
         //주문 검증
-        Menu menu = menuRepository.findById(dto.getMenuId())
-                .orElseThrow(() -> new ApiException(MenuErrorCode.NOT_FOUND));
+        Menu menu = menuRepository.findByIdOrElseThrows(dto.getMenuId());
 
         MenuHistory menuHistory = new MenuHistory(menu);
         menuHistoryRepository.save(menuHistory);

@@ -27,7 +27,7 @@ public class MenuOptionRequestDto {
 
     @Schema(description = "메뉴 옵션 상세 리스트")
     @NotNull @Valid
-    List<MenuOptionDetailReqeustDto> menuOptionDetailReqeustDtoList;
+    List<MenuOptionDetailRequestDto> menuOptionDetailReqeustDtoList;
 
     public MenuOption toEntity() {
 
@@ -38,7 +38,7 @@ public class MenuOptionRequestDto {
                 .requirement(requirement)
                 .menuOptionDetailList(
                         menuOptionDetailReqeustDtoList.stream()
-                                .map(MenuOptionDetailReqeustDto::toEntity)
+                                .map(MenuOptionDetailRequestDto::toEntity)
                                 .toList()
                 )
                 .build();

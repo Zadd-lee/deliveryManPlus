@@ -1,12 +1,13 @@
 package com.deliveryManPlus.common.utils;
 
+import com.deliveryManPlus.auth.entity.User;
+import com.deliveryManPlus.cart.entity.Cart;
+import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.entity.Menu;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.shop.entity.Shop;
-import com.deliveryManPlus.auth.entity.User;
-import com.deliveryManPlus.common.exception.ApiException;
 
 public class EntityValidator {
 
@@ -45,5 +46,13 @@ public class EntityValidator {
 
     public static boolean isValid(Long shopId, Order order) {
         return order.getShop().getId().equals(shopId);
+    }
+
+    public static boolean isValid(Long shopId, Cart cart) {
+        //todo 연관관계 너무 길어짐 관련 사항 리팩토링 필요
+        return cart.getCartMenuList().stream()
+                .findFirst()
+                .map(cartMenu -> cartMenu.getMenu().getShop().getId().equals(shopId))
+                .orElse(true);
     }
 }

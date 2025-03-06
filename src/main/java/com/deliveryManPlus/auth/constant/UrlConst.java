@@ -7,7 +7,7 @@ public class UrlConst {
     ,"/api*", "/api-docs/**", "/swagger-ui/**"};
 
     //사장 인터셉터 리스트
-    public static final String[] ADMIN_INTERCEPTOR_LIST = {"/admin", "/admin/**"};
+    public static final String[] ADMIN_INTERCEPTOR_LIST = {"/admin", "/admin/**","/user/**"};
 
     //사장 인터셉터 리스트
     public static final String[] OWNER_INTERCEPTOR_LIST = {"/owner", "/owner/**"};

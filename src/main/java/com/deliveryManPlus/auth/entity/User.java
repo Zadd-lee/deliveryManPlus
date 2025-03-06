@@ -1,6 +1,7 @@
 package com.deliveryManPlus.auth.entity;
 
 import com.deliveryManPlus.auth.constant.Role;
+import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.common.constant.Status;
 import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
 import jakarta.persistence.*;
@@ -29,6 +30,9 @@ public class User extends CreateAndUpdateDateEntity {
 
     @OneToMany(mappedBy = "user")
     List<BasicAuth> basicAuthList;
+
+    @OneToMany(mappedBy = "customer")
+    List<Cart> cartList;
 
     public User(String nickname, LocalDate birthday, Role role) {
         this.nickname = nickname;

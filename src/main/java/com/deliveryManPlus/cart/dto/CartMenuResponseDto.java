@@ -24,7 +24,7 @@ public class CartMenuResponseDto {
         this.cartMenuOptionDtoList = cartMenu.getCartMenuOptionDetailList()
                 .stream()
                 .map(CartMenuOptionDetail::getMenuOptionDetail)
-                .map(CartMenuOptionResponseDto::new)
+                .map(menuOptionDetail -> new CartMenuOptionResponseDto(menuOptionDetail,cartMenu.getCartMenuOptionDetailList()))
                 .toList();
 
     }

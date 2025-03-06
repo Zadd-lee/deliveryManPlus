@@ -1,5 +1,6 @@
 package com.deliveryManPlus.cart.dto;
 
+import com.deliveryManPlus.cart.entity.CartMenuOptionDetail;
 import com.deliveryManPlus.menu.entity.MenuOptionDetail;
 import lombok.Getter;
 
@@ -11,12 +12,11 @@ public class CartMenuOptionResponseDto {
     private final String menuOptionName;
     private final List<String> menuOptionDetailNameList;
 
-    public CartMenuOptionResponseDto(MenuOptionDetail menuOptionDetail) {
+    public CartMenuOptionResponseDto(MenuOptionDetail menuOptionDetail, List<CartMenuOptionDetail> cartMenuOptionDetailList) {
         this.menuOptionId = menuOptionDetail.getMenuOption().getId();
         this.menuOptionName = menuOptionDetail.getMenuOption().getTitle();
-        this.menuOptionDetailNameList = menuOptionDetail.getMenuOption().getMenuOptionDetailList()
-                .stream()
-                .map(MenuOptionDetail::getName)
+        this.menuOptionDetailNameList = cartMenuOptionDetailList.stream()
+                .map(x -> x.getMenuOptionDetail().getName())
                 .toList();
     }
 }

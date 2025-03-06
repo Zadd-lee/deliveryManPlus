@@ -27,7 +27,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,8 +72,7 @@ public class CartServiceImpl implements CartService {
                 );
 
         //cart가 여러개 일 경우 최신 cart, 없을 경우 새로운 cart 생성후 db에 저장
-        Cart cart = cartRepository.getCartsByCustomerId(user.getId()).stream()
-                .max(Comparator.comparing(Cart::getCreatedAt))
+        Cart cart = cartRepository.findByCustomerIdDesc(getUser().getId())
                 .orElseGet(() -> {
                     Cart newCart = Cart.builder()
                             .customer(user)
@@ -96,50 +94,21 @@ public class CartServiceImpl implements CartService {
         cartMenuRepository.save(newCartMenu);
     }
 
-    private void saveMenuOptionDetail(CartMenuRequestDto dto, CartMenu cartMenu) {
-        List<CartMenuOptionDetail> cartMenuOptionDetailList = menuOptionDetailRepository.findAllById(dto.getAllCartMenuOptionDetailIdList())
-                .stream()
-                .map(x -> new CartMenuOptionDetail(cartMenu, x))
-                .toList();
-        cartMenuOptionDetailRepository.saveAll(cartMenuOptionDetailList);
-
-
-        cartMenu.updateMenuOptionDetailList(cartMenuOptionDetailList);
-    }
-
-    //menu의 shop 과 새로 생성되는 menu의 shop이 다를 경우 cart 초기화
-    private void validCartAndShopId(Long shopId, Cart cart) {
-        if (!isValid(shopId, cart)) {
-            List<CartMenu> cartMenuList = cart.getCartMenuList();
-            cartMenuRepository.deleteAll(cartMenuList);
-            cartMenuList.clear();
-        }
-    }
-
     @Override
     public CartResponseDto findCartList() {
 
 
-        Cart cart = getCart(getUser());
+        Cart cart = cartRepository.findByCustomerIdOrElseThrow(getUser().getId());
 
         return new CartResponseDto(cart);
 
-    }
-
-    //cart 는 개인당 하나 지정
-    //cart 가 1개 이상인 경우 최신 cart 를 선택
-    private Cart getCart(User user) {
-        return cartRepository.getCartsByCustomerId(user.getId())
-                .stream()
-                .max(Comparator.comparing(Cart::getCreatedAt))
-                .orElseThrow(() -> new ApiException(CartErrorCode.NOT_FOUND));
     }
 
     @Transactional
     @Override
     public void updateCartMenuOptionDetail(Long menuId, CartMenuOptionDetailRequestDto dto) {
         //cart 검증
-        Cart cart = getCart(getUser());
+        Cart cart = cartRepository.findByCustomerIdOrElseThrow(getUser().getId());
         //menu option detail
         validateMenuOptionDetail(dto, menuRepository.findByIdOrElseThrows(menuId));
 
@@ -165,11 +134,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public void updateCartMenuQuantity(Long menuId, int quantity) {
-        List<Cart> cartsByCustomerId = cartRepository.getCartsByCustomerId(getUser().getId());
-
-        Cart cart = cartsByCustomerId.stream()
-                .max(Comparator.comparing(Cart::getCreatedAt))
-                .orElseThrow(() -> new ApiException(CartErrorCode.NOT_FOUND));
+           Cart cart = cartRepository.findByCustomerIdOrElseThrow(getUser().getId());
 
         CartMenu cartMenu = cart.getCartMenuList().stream()
                 .filter(x -> x.getMenu().getId().equals(menuId))
@@ -177,6 +142,41 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ApiException(CartErrorCode.MENU_NOT_FOUND));
 
         cartMenu.updateQuantity(quantity);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCartMenu(Long menuId) {
+        cartMenuOptionDetailRepository.deleteByMenuIdAndCustomerId(menuId,getUser().getId());
+        cartMenuRepository.deleteByMenuAndCustomerId(menuId,getUser().getId());
+    }
+
+    @Transactional
+    @Override
+    public void deleteCart() {
+        cartMenuOptionDetailRepository.deleteByCustomerId(getUser().getId());
+        cartMenuRepository.deleteByCustomerId(getUser().getId());
+        cartRepository.deleteByCustomerId(getUser().getId());
+    }
+
+    private void saveMenuOptionDetail(CartMenuRequestDto dto, CartMenu cartMenu) {
+        List<CartMenuOptionDetail> cartMenuOptionDetailList = menuOptionDetailRepository.findAllById(dto.getAllCartMenuOptionDetailIdList())
+                .stream()
+                .map(x -> new CartMenuOptionDetail(cartMenu, x))
+                .toList();
+        cartMenuOptionDetailRepository.saveAll(cartMenuOptionDetailList);
+
+
+        cartMenu.updateMenuOptionDetailList(cartMenuOptionDetailList);
+    }
+
+    //menu의 shop 과 새로 생성되는 menu의 shop이 다를 경우 cart 초기화
+    private void validCartAndShopId(Long shopId, Cart cart) {
+        if (!isValid(shopId, cart)) {
+            List<CartMenu> cartMenuList = cart.getCartMenuList();
+            cartMenuRepository.deleteAll(cartMenuList);
+            cartMenuList.clear();
+        }
     }
 
     private static void validateMenuOptionDetail(CartMenuOptionDetailRequestDto dto, Menu menu) {
@@ -214,20 +214,5 @@ public class CartServiceImpl implements CartService {
         if (!validOptionIds.containsAll(requestedOptionIds)) {
             throw new ApiException(errorCode);
         }
-    }
-
-    @Transactional
-    @Override
-    public void deleteCartMenu(Long menuId) {
-        cartMenuOptionDetailRepository.deleteByMenuIdAndCustomerId(menuId,getUser().getId());
-        cartMenuRepository.deleteByMenuAndCustomerId(menuId,getUser().getId());
-    }
-
-    @Transactional
-    @Override
-    public void deleteCart() {
-        cartMenuOptionDetailRepository.deleteByCustomerId(getUser().getId());
-        cartMenuRepository.deleteByCustomerId(getUser().getId());
-        cartRepository.deleteByCustomerId(getUser().getId());
     }
 }

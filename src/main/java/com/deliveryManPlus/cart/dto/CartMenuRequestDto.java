@@ -13,7 +13,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
-public class CartCreateMenuDto {
+public class CartMenuRequestDto {
 
     //옵션
     @Valid
@@ -32,7 +32,7 @@ public class CartCreateMenuDto {
                 .build();
     }
 
-    public List<Long> getAllCartMenuOptionDtoList() {
+    public List<Long> getAllCartMenuOptionDetailIdList() {
         return this.cartMenuOptionDtoList.stream()
                 .flatMap(x -> x.getMenuOptionDetailIdList()
                         .stream())

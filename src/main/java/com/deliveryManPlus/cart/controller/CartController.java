@@ -1,6 +1,7 @@
 package com.deliveryManPlus.cart.controller;
 
-import com.deliveryManPlus.cart.dto.CartCreateMenuDto;
+import com.deliveryManPlus.cart.dto.CartMenuOptionDetailRequestDto;
+import com.deliveryManPlus.cart.dto.CartMenuRequestDto;
 import com.deliveryManPlus.cart.dto.CartResponseDto;
 import com.deliveryManPlus.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,9 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping("/shop/{shopId}/menu/{menuId}/cart")
-    public ResponseEntity<Void> addCartMenu(@PathVariable(name = "shopId") Long shopId, @PathVariable(name = "menuId") Long menuId, @RequestBody CartCreateMenuDto dto) {
+    public ResponseEntity<Void> addCartMenu(@PathVariable(name = "shopId") Long shopId
+            , @PathVariable(name = "menuId") Long menuId
+            , @RequestBody CartMenuRequestDto dto) {
         cartService.addCartMenu(shopId, menuId, dto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -23,4 +26,12 @@ public class CartController {
     public ResponseEntity<CartResponseDto> getCartList() {
         return new ResponseEntity<>(cartService.findCartList(), HttpStatus.OK);
     }
+
+    @PutMapping("/user/cart/menu/{menuId}")
+    public ResponseEntity<Void> updateCartMenu(@PathVariable(name = "menuId") Long menuId
+            , @RequestBody CartMenuOptionDetailRequestDto dto) {
+        cartService.updateCartMenuOptionDetail(menuId, dto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

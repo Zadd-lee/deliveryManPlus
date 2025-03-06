@@ -1,8 +1,9 @@
 package com.deliveryManPlus.cart.service.imp;
 
 import com.deliveryManPlus.auth.entity.User;
-import com.deliveryManPlus.cart.dto.CartCreateMenuDto;
+import com.deliveryManPlus.cart.dto.CartMenuOptionDetailRequestDto;
 import com.deliveryManPlus.cart.dto.CartMenuOptionRequestDto;
+import com.deliveryManPlus.cart.dto.CartMenuRequestDto;
 import com.deliveryManPlus.cart.dto.CartResponseDto;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.cart.entity.CartMenu;
@@ -14,8 +15,10 @@ import com.deliveryManPlus.cart.service.CartService;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.CartErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuErrorCode;
+import com.deliveryManPlus.common.exception.constant.errorcode.MenuOptionErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.entity.Menu;
+import com.deliveryManPlus.menu.entity.MenuOption;
 import com.deliveryManPlus.menu.repository.MenuOptionDetailRepository;
 import com.deliveryManPlus.menu.repository.MenuOptionRepository;
 import com.deliveryManPlus.menu.repository.MenuRepository;
@@ -25,7 +28,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.deliveryManPlus.common.utils.EntityValidator.isValid;
 import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
@@ -43,7 +49,7 @@ public class CartServiceImpl implements CartService {
 
     @Transactional
     @Override
-    public void addCartMenu(Long shopId, Long menuId, CartCreateMenuDto dto) {
+    public void addCartMenu(Long shopId, Long menuId, CartMenuRequestDto dto) {
         //검증
         //user validate
         User user = getUser();
@@ -85,16 +91,20 @@ public class CartServiceImpl implements CartService {
         CartMenu newCartMenu = dto.toEntity(menu, cart);
 
         //cart menu option detail 저장
-        List<CartMenuOptionDetail> cartMenuOptionDetailList = menuOptionDetailRepository.findAllById(dto.getAllCartMenuOptionDtoList())
+        saveMenuOptionDetail(dto, newCartMenu);
+
+        cartMenuRepository.save(newCartMenu);
+    }
+
+    private void saveMenuOptionDetail(CartMenuRequestDto dto, CartMenu cartMenu) {
+        List<CartMenuOptionDetail> cartMenuOptionDetailList = menuOptionDetailRepository.findAllById(dto.getAllCartMenuOptionDetailIdList())
                 .stream()
-                .map(x -> new CartMenuOptionDetail(newCartMenu, x))
+                .map(x -> new CartMenuOptionDetail(cartMenu, x))
                 .toList();
         cartMenuOptionDetailRepository.saveAll(cartMenuOptionDetailList);
 
 
-        newCartMenu.updateMenuOptionDetailList(cartMenuOptionDetailList);
-
-        cartMenuRepository.save(newCartMenu);
+        cartMenu.updateMenuOptionDetailList(cartMenuOptionDetailList);
     }
 
     //menu의 shop 과 새로 생성되는 menu의 shop이 다를 경우 cart 초기화
@@ -108,16 +118,84 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartResponseDto findCartList() {
-        User user = getUser();
 
-        //cart 는 개인당 하나 지정
-        //cart 가 1개 이상인 경우 최신 cart 를 선택
-        Cart cart = cartRepository.getCartsByCustomerId(user.getId())
-                .stream()
-                .max(Comparator.comparing(Cart::getCreatedAt))
-                .orElseThrow(() -> new ApiException(CartErrorCode.NOT_FOUND));
+
+        Cart cart = getCart(getUser());
 
         return new CartResponseDto(cart);
 
+    }
+
+    //cart 는 개인당 하나 지정
+    //cart 가 1개 이상인 경우 최신 cart 를 선택
+    private Cart getCart(User user) {
+        return cartRepository.getCartsByCustomerId(user.getId())
+                .stream()
+                .max(Comparator.comparing(Cart::getCreatedAt))
+                .orElseThrow(() -> new ApiException(CartErrorCode.NOT_FOUND));
+    }
+
+    @Transactional
+    @Override
+    public void updateCartMenuOptionDetail(Long menuId, CartMenuOptionDetailRequestDto dto) {
+        //cart 검증
+        Cart cart = getCart(getUser());
+        //menu option detail
+        validateMenuOptionDetail(dto, menuRepository.findByIdOrElseThrows(menuId));
+
+        CartMenu cartMenu = cart.getCartMenuList().stream()
+                .filter(x -> x.getMenu().getId().equals(menuId))
+                .findFirst()
+                .orElseThrow(() -> new ApiException(CartErrorCode.MENU_NOT_FOUND));
+
+        cartMenuOptionDetailRepository.deleteAllByCartMenuId(cartMenu.getId());
+
+        List<CartMenuOptionDetail> cartMenuOptionDetailList = menuOptionDetailRepository.findAllById(dto.getCartMenuOptionDetailIdList())
+                .stream()
+                .map(menuOptionDetail -> CartMenuOptionDetail.builder()
+                        .menuOptionDetail(menuOptionDetail)
+                        .cartMenu(cartMenu)
+                        .build())
+                .toList();
+
+        cartMenuOptionDetailRepository.saveAll(cartMenuOptionDetailList);
+
+    }
+
+    private static void validateMenuOptionDetail(CartMenuOptionDetailRequestDto dto, Menu menu) {
+        if (dto.getCartMenuOptionDetailIdList().isEmpty()) {
+            return;
+        }
+        Set<Long> menuOptionIdSet = menu.getMenuOptionList()
+                .stream()
+                .map(MenuOption::getId)
+                .collect(Collectors.toSet());
+
+        if (!menuOptionIdSet.containsAll(new HashSet<>(dto.getCartMenuOptionDetailIdList()))) {
+            throw new ApiException(CartErrorCode.MENU_NOT_FOUND);
+        }
+    }
+
+
+    private void validateDtoMenu(CartMenuRequestDto dto, Menu menu) {
+        List<Long> allCartMenuOptionIdList = dto.getAllCartMenuOptionDetailIdList();
+        List<Long> menuOptionIdList = dto.getCartMenuOptionDtoList()
+                .stream()
+                .map(CartMenuOptionRequestDto::getMenuOptionId)
+                .toList();
+
+        Set<Long> menuOptionIdSet = menu.getMenuOptionList()
+                .stream()
+                .map(MenuOption::getId)
+                .collect(Collectors.toSet());
+
+        validateMenuOptionIds(menuOptionIdSet, allCartMenuOptionIdList, MenuOptionErrorCode.NOT_FOUND);
+        validateMenuOptionIds(menuOptionIdSet, menuOptionIdList, MenuOptionErrorCode.OPTION_DETAIL_NOT_FOUND);
+    }
+
+    private void validateMenuOptionIds(Set<Long> validOptionIds, List<Long> requestedOptionIds, MenuOptionErrorCode errorCode) {
+        if (!validOptionIds.containsAll(requestedOptionIds)) {
+            throw new ApiException(errorCode);
+        }
     }
 }

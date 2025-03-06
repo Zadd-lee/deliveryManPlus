@@ -24,8 +24,6 @@ public class EntityValidator {
         }
     }
 
-
-
     /**
      * 사용자가 가게의 소유자인지 확인
      * @param userId

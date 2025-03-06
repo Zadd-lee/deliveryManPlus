@@ -15,4 +15,5 @@ public interface CartService {
 
     void deleteCartMenu(Long menuId);
 
+    void deleteCart();
 }

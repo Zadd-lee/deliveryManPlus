@@ -49,4 +49,10 @@ public class CartController {
         cartService.deleteCartMenu(menuId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/user/cart")
+    public ResponseEntity<Void> deleteCart() {
+        cartService.deleteCart();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

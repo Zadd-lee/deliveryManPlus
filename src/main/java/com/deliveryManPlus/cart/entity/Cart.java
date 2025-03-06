@@ -23,7 +23,7 @@ public class Cart extends CreateDateEntity {
     @JoinColumn(name = "user_id")
     private User customer;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL)
     private List<CartMenu> cartMenuList = new ArrayList<>();
 
     @Builder

@@ -222,4 +222,12 @@ public class CartServiceImpl implements CartService {
         cartMenuOptionDetailRepository.deleteByMenuIdAndCustomerId(menuId,getUser().getId());
         cartMenuRepository.deleteByMenuAndCustomerId(menuId,getUser().getId());
     }
+
+    @Transactional
+    @Override
+    public void deleteCart() {
+        cartMenuOptionDetailRepository.deleteByCustomerId(getUser().getId());
+        cartMenuRepository.deleteByCustomerId(getUser().getId());
+        cartRepository.deleteByCustomerId(getUser().getId());
+    }
 }

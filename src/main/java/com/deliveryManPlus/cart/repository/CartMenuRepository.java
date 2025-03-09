@@ -11,7 +11,4 @@ public interface CartMenuRepository extends JpaRepository<CartMenu,Long> {
     @Query("delete from CartMenu cm where cm.menu.id = :menuId and cm.cart.customer.id = :customerId")
     void deleteByMenuAndCustomerId(@Param("menuId") Long menuId, @Param("customerId") Long customerId);
 
-    @Modifying
-    @Query("delete from CartMenu cm where cm.cart.customer.id = :customerId")
-    void deleteByCustomerId(@Param("customerId") Long customerId);
 }

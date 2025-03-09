@@ -1,10 +1,12 @@
 package com.deliveryManPlus.order.entity;
 
-import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
-import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
-import com.deliveryManPlus.shop.entity.Shop;
 import com.deliveryManPlus.auth.entity.User;
-import com.deliveryManPlus.menu.entity.MenuHistory;
+import com.deliveryManPlus.cart.entity.Cart;
+import com.deliveryManPlus.cart.entity.CartMenu;
+import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
+import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
+import com.deliveryManPlus.common.utils.Calculator;
+import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,21 +36,20 @@ public class Order extends CreateAndUpdateDateEntity {
     @JoinColumn(name = "user_id")
     private User customer;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderMenu> orderMenu;
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private final List<OrderMenu> orderMenu = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-
     @Builder
-    public Order(MenuHistory menuHistory, User customer) {
+    public Order(User customer, Shop shop) {
         this.status = OrderStatus.SUBMIT;
-        this.totalPrice = menuHistory.getPrice();
         this.customer = customer;
-        this.orderMenu = new ArrayList<>();
+        this.shop = shop;
     }
+
     public void updateOrderMenu(List<OrderMenu> orderMenuList) {
         this.orderMenu.addAll(orderMenuList);
     }
@@ -60,5 +61,25 @@ public class Order extends CreateAndUpdateDateEntity {
     public void reject(String rejectReason) {
         this.status = OrderStatus.REJECTED;
         this.rejectReason = rejectReason;
+    }
+
+    public Order(Cart cart) {
+        this.customer = cart.getCustomer();
+        List<CartMenu> cartMenuList = cart.getCartMenuList();
+        this.shop = cartMenuList.stream()
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("주문할 메뉴가 없습니다."))
+                .getMenu().getShop();
+
+        this.status = OrderStatus.SUBMIT;
+
+        this.totalPrice = cart.getCartMenuList()
+                .stream()
+                .map(cartMenu -> {
+                    BigDecimal menuPrice = Calculator.calculateMenuPrice(cartMenu);
+                    return menuPrice.multiply(BigDecimal.valueOf(cartMenu.getQuantity()));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
     }
 }

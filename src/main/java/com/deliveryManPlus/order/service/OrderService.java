@@ -1,22 +1,21 @@
 package com.deliveryManPlus.order.service;
 
-import com.deliveryManPlus.order.dto.OrderCreateRequestDto;
-import com.deliveryManPlus.order.dto.OrderResponseDto;
-import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
-import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
-import com.deliveryManPlus.auth.entity.User;
-import jakarta.validation.Valid;
+import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
+import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
+import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 
 import java.util.List;
 
 public interface OrderService {
-    void createOrder(User user, @Valid OrderCreateRequestDto menuList);
+    void createOrder();
 
-    List<OrderResponseDto> findOrderForUser(User user);
+    List<OrderDetailResponseDto> findOrderForOwner(Long shopId);
 
-    List<OrderResponseDto> findOrderForOwner(Long shopId);
+    void updateStatus(Long shopId, Long orderId, OrderStatus orderStatus);
 
-    OrderResponseDto updateStatus(Long shopId, Long orderId, @Valid OrderStatusUpdateDto dto);
+    void reject(Long shopId, Long orderId, String rejectReason);
 
-    void reject(Long shopId, Long orderId, @Valid OrderStatusRejectDto dto);
+    List<OrderSimpleResponseDto> findAllOrderForUser();
+
+    OrderDetailResponseDto findOrderForUser(Long orderId);
 }

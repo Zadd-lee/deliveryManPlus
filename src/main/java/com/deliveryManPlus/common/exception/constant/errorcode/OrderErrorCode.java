@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 @Getter
 public enum OrderErrorCode implements ErrorCode {
+    CART_EMPTY(HttpStatus.BAD_REQUEST,"장바구니가 비어있습니다"),
     NOT_FOUND(HttpStatus.NOT_FOUND,"주문을 찾을 수 없습니다"),
     UNAUTHORIZED(HttpStatus.FORBIDDEN,"권한이 없습니다"),;
 

@@ -1,8 +1,11 @@
 package com.deliveryManPlus.order.entity;
 
 import com.deliveryManPlus.auth.entity.User;
+import com.deliveryManPlus.cart.entity.Cart;
+import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
+import com.deliveryManPlus.common.utils.Calculator;
 import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -10,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,20 +36,17 @@ public class Order extends CreateAndUpdateDateEntity {
     @JoinColumn(name = "user_id")
     private User customer;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderMenu> orderMenu;
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private final List<OrderMenu> orderMenu = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
     @Builder
-    public Order(BigDecimal totalPrice, User customer, List<OrderMenu> orderMenu, Shop shop) {
+    public Order(User customer, Shop shop) {
         this.status = OrderStatus.SUBMIT;
-        this.totalPrice = totalPrice;
-        this.rejectReason = rejectReason;
         this.customer = customer;
-        this.orderMenu = orderMenu;
         this.shop = shop;
     }
 
@@ -60,5 +61,25 @@ public class Order extends CreateAndUpdateDateEntity {
     public void reject(String rejectReason) {
         this.status = OrderStatus.REJECTED;
         this.rejectReason = rejectReason;
+    }
+
+    public Order(Cart cart) {
+        this.customer = cart.getCustomer();
+        List<CartMenu> cartMenuList = cart.getCartMenuList();
+        this.shop = cartMenuList.stream()
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("주문할 메뉴가 없습니다."))
+                .getMenu().getShop();
+
+        this.status = OrderStatus.SUBMIT;
+
+        this.totalPrice = cart.getCartMenuList()
+                .stream()
+                .map(cartMenu -> {
+                    BigDecimal menuPrice = Calculator.calculateMenuPrice(cartMenu);
+                    return menuPrice.multiply(BigDecimal.valueOf(cartMenu.getQuantity()));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
     }
 }

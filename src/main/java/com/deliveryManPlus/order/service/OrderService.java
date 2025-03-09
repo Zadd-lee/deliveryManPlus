@@ -1,6 +1,5 @@
 package com.deliveryManPlus.order.service;
 
-import com.deliveryManPlus.order.dto.OrderCreateRequestDto;
 import com.deliveryManPlus.order.dto.OrderResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
@@ -10,7 +9,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 public interface OrderService {
-    void createOrder(User user, @Valid OrderCreateRequestDto menuList);
+    void createOrder();
 
     List<OrderResponseDto> findOrderForUser(User user);
 

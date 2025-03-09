@@ -1,11 +1,10 @@
 package com.deliveryManPlus.order.controller;
 
-import com.deliveryManPlus.order.dto.OrderCreateRequestDto;
+import com.deliveryManPlus.auth.config.UserDetailsImp;
 import com.deliveryManPlus.order.dto.OrderResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
 import com.deliveryManPlus.order.service.OrderService;
-import com.deliveryManPlus.auth.config.UserDetailsImp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,16 +24,9 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
-    @Operation(summary = "주문 생성", description = "주문을 생성합니다."
-    ,responses = {
-            @ApiResponse(responseCode = "201", description = "주문 생성 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "500", description = "서버 오류"),
-    })
     @PostMapping("/user/order")
-    public ResponseEntity<Void> createOrder(@AuthenticationPrincipal UserDetailsImp userDetailsImp,
-                                            @Valid @RequestBody OrderCreateRequestDto dto) {
-        orderService.createOrder(userDetailsImp.getBasicAuth().getUser(), dto);
+    public ResponseEntity<Void> createOrder() {
+        orderService.createOrder();
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

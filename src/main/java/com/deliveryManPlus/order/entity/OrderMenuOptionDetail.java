@@ -20,7 +20,7 @@ public class OrderMenuOptionDetail extends CreateDateEntity {
     private String name;
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "order_menu_id")
     private OrderMenu orderMenu;
 
@@ -33,5 +33,9 @@ public class OrderMenuOptionDetail extends CreateDateEntity {
     public OrderMenuOptionDetail(CartMenuOptionDetail cartMenuOptionDetail) {
         this.name = cartMenuOptionDetail.getMenuOptionDetail().getName();
         this.price = cartMenuOptionDetail.getMenuOptionDetail().getOptionPrice();
+    }
+
+    public void updateOrderMenu(OrderMenu orderMenu) {
+        this.orderMenu = orderMenu;
     }
 }

@@ -12,7 +12,6 @@ import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.repository.MenuRepository;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
-import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.entity.OrderMenu;
 import com.deliveryManPlus.order.entity.OrderMenuOptionDetail;
@@ -142,16 +141,15 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public void reject(Long shopId, Long orderId, OrderStatusRejectDto dto) {
+    public void reject(Long shopId, Long orderId, String rejectReason) {
         //가게 검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
         validate(shop);
 
         //주문검증
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
-        order.reject(dto.getRejectReason());
+        Order order = orderRepository.findByIdOrElseThrow(orderId);
+        order.reject(rejectReason);
     }
 
     private OrderMenu convertCartMenuToOrderMenu(CartMenu cartMenu, Order order) {

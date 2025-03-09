@@ -25,7 +25,7 @@ public class CartMenu extends CreateDateEntity {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @OneToMany(mappedBy = "cartMenu")
+    @OneToMany(mappedBy = "cartMenu",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<CartMenuOptionDetail> cartMenuOptionDetailList= new ArrayList<>();
 
     @ManyToOne

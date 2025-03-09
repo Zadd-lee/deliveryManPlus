@@ -9,6 +9,7 @@ import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.repository.MenuRepository;
+import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
@@ -63,9 +64,6 @@ public class OrderServiceImp implements OrderService {
         order.updateOrderMenu(orderMenuList);
         orderMenuList.forEach(orderMenu -> orderMenu.updateOrder(order));
 
-
-
-
         //order menu option 저장
         List<CartMenu> cartMenuList = cart.getCartMenuList();
 
@@ -95,19 +93,6 @@ public class OrderServiceImp implements OrderService {
         cartRepository.delete(cart);
     }
 
-    private OrderMenu convertCartMenuToOrderMenu(CartMenu cartMenu, Order order) {
-        OrderMenu orderMenu = new OrderMenu(cartMenu);
-        orderMenu.updateOrder(order);
-        return orderMenu;
-    }
-
-    private List<OrderMenuOptionDetail> convertCartMenuOptionsToOrderMenuOptions(CartMenu cartMenu) {
-        return cartMenu.getCartMenuOptionDetailList()
-                .stream()
-                .map(OrderMenuOptionDetail::new)
-                .toList();
-    }
-
     @Override
     public List<OrderSimpleResponseDto> findAllOrderForUser() {
         return orderRepository.findByCustomerId(getUser().getId())
@@ -117,7 +102,15 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> findOrderForOwner(Long shopId) {
+    public OrderDetailResponseDto findOrderForUser(Long orderId) {
+        Order order = orderRepository.findByIdByElseThrow(orderId);
+        if(!order.getCustomer().getId().equals(getUser().getId())){
+            throw new ApiException(OrderErrorCode.UNAUTHORIZED);
+        }
+        return new OrderDetailResponseDto(order);
+    }
+
+    @Override
     public List<OrderSimpleResponseDto> findOrderForOwner(Long shopId) {
         //가게 검증
         Shop shop = shopRepository.findById(shopId)
@@ -161,6 +154,19 @@ public class OrderServiceImp implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
         order.reject(dto.getRejectReason());
+    }
+
+    private OrderMenu convertCartMenuToOrderMenu(CartMenu cartMenu, Order order) {
+        OrderMenu orderMenu = new OrderMenu(cartMenu);
+        orderMenu.updateOrder(order);
+        return orderMenu;
+    }
+
+    private List<OrderMenuOptionDetail> convertCartMenuOptionsToOrderMenuOptions(CartMenu cartMenu) {
+        return cartMenu.getCartMenuOptionDetailList()
+                .stream()
+                .map(OrderMenuOptionDetail::new)
+                .toList();
     }
 
 

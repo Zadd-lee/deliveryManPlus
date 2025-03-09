@@ -1,6 +1,7 @@
 package com.deliveryManPlus.order.service;
 
-import com.deliveryManPlus.order.dto.OrderResponseDto;
+import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
+import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
 import jakarta.validation.Valid;
@@ -17,4 +18,6 @@ public interface OrderService {
     void reject(Long shopId, Long orderId, @Valid OrderStatusRejectDto dto);
 
     List<OrderSimpleResponseDto> findAllOrderForUser();
+
+    OrderDetailResponseDto findOrderForUser(Long orderId);
 }

@@ -111,7 +111,7 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public List<OrderSimpleResponseDto> findOrderForOwner(Long shopId) {
+    public List<OrderDetailResponseDto> findOrderForOwner(Long shopId) {
         //가게 검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -124,7 +124,7 @@ public class OrderServiceImp implements OrderService {
             throw new ApiException(OrderErrorCode.NOT_FOUND);
         }
         return orderList.stream()
-                .map(OrderSimpleResponseDto::new)
+                .map(OrderDetailResponseDto::new)
                 .toList();
     }
 

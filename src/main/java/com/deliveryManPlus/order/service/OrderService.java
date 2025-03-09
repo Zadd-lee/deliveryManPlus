@@ -11,7 +11,7 @@ import java.util.List;
 public interface OrderService {
     void createOrder();
 
-    List<OrderSimpleResponseDto> findOrderForOwner(Long shopId);
+    List<OrderDetailResponseDto> findOrderForOwner(Long shopId);
 
     OrderSimpleResponseDto updateStatus(Long shopId, Long orderId, @Valid OrderStatusUpdateDto dto);
 

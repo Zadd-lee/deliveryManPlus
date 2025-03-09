@@ -50,9 +50,8 @@ public class OrderController {
             @Parameter(name = "shopId", description = "식당 식별자", required = true, example = "1")
     })
     @GetMapping("/owner/{shopId}/order")
-    public ResponseEntity<List<OrderSimpleResponseDto>> findOrderForOwner(@PathVariable(name = "shopId") Long shopId) {
-        List<OrderSimpleResponseDto> orderSimpleResponseDtos = orderService.findOrderForOwner(shopId);
-        return new ResponseEntity<>(orderSimpleResponseDtos, HttpStatus.OK);
+    public ResponseEntity<List<OrderDetailResponseDto>> findOrderForOwner(@PathVariable(name = "shopId") Long shopId) {
+        return new ResponseEntity<>(orderService.findOrderForOwner(shopId), HttpStatus.OK);
     }
 
     @Operation(summary = "주문 상태 변경", description = "주문의 상태를 변경합니다."

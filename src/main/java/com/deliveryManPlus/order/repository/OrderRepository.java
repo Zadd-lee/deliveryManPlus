@@ -17,7 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByShopId(@Param("shopId") Long shopId);
 
 
-    default Order findByIdByElseThrow(Long orderId) {
+    default Order findByIdOrElseThrow(Long orderId) {
         return findById(orderId)
                 .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
     }

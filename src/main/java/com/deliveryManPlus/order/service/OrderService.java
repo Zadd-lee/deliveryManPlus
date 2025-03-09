@@ -1,9 +1,9 @@
 package com.deliveryManPlus.order.service;
 
+import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
-import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface OrderService {
 
     List<OrderDetailResponseDto> findOrderForOwner(Long shopId);
 
-    OrderSimpleResponseDto updateStatus(Long shopId, Long orderId, @Valid OrderStatusUpdateDto dto);
+    void updateStatus(Long shopId, Long orderId, OrderStatus orderStatus);
 
     void reject(Long shopId, Long orderId, @Valid OrderStatusRejectDto dto);
 

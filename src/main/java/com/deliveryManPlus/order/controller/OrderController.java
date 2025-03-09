@@ -1,6 +1,5 @@
 package com.deliveryManPlus.order.controller;
 
-import com.deliveryManPlus.auth.config.UserDetailsImp;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
@@ -14,7 +13,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,12 +63,11 @@ public class OrderController {
             @Parameter(name = "orderId", description = "주문 식별자", required = true, example = "1")
     })
     @PutMapping("/owner/{shopId}/order/{orderId}")
-    public ResponseEntity<OrderSimpleResponseDto> updateStatus(@AuthenticationPrincipal UserDetailsImp userDetailsImp,
-                                                               @PathVariable(name = "shopId") Long shopId,
+    public ResponseEntity<Void> updateStatus(@PathVariable(name = "shopId") Long shopId,
                                                                @PathVariable(name = "orderId") Long orderId,
                                                                @Valid @RequestBody OrderStatusUpdateDto dto) {
-        OrderSimpleResponseDto orderSimpleResponseDto = orderService.updateStatus(shopId, orderId, dto);
-        return new ResponseEntity<>(orderSimpleResponseDto, HttpStatus.OK);
+        orderService.updateStatus(shopId, orderId, dto.getStatus());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "주문 거절", description = "주문을 거절합니다."

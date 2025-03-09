@@ -7,12 +7,12 @@ import com.deliveryManPlus.cart.repository.CartMenuRepository;
 import com.deliveryManPlus.cart.repository.CartRepository;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderErrorCode;
+import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.repository.MenuRepository;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
-import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.entity.OrderMenu;
 import com.deliveryManPlus.order.entity.OrderMenuOptionDetail;
@@ -103,7 +103,7 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public OrderDetailResponseDto findOrderForUser(Long orderId) {
-        Order order = orderRepository.findByIdByElseThrow(orderId);
+        Order order = orderRepository.findByIdOrElseThrow(orderId);
         if(!order.getCustomer().getId().equals(getUser().getId())){
             throw new ApiException(OrderErrorCode.UNAUTHORIZED);
         }
@@ -128,19 +128,17 @@ public class OrderServiceImp implements OrderService {
                 .toList();
     }
 
+    @Transactional
     @Override
-    public OrderSimpleResponseDto updateStatus(Long shopId, Long orderId, OrderStatusUpdateDto dto) {
+    public void updateStatus(Long shopId, Long orderId, OrderStatus orderStatus) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
         validate(shop);
 
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
+        Order order = orderRepository.findByIdOrElseThrow(orderId);
 
-        order.updateStatus(dto.getStatus());
-
-        return new OrderSimpleResponseDto(order);
+        order.updateStatus(orderStatus);
     }
 
     @Override

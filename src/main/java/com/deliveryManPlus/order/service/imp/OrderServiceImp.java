@@ -1,6 +1,5 @@
 package com.deliveryManPlus.order.service.imp;
 
-import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.cart.repository.CartMenuOptionDetailRepository;
@@ -10,7 +9,7 @@ import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.menu.repository.MenuRepository;
-import com.deliveryManPlus.order.dto.OrderResponseDto;
+import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
 import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
 import com.deliveryManPlus.order.entity.Order;
@@ -110,15 +109,16 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> findOrderForUser(User user) {
-        List<Order> orderList = orderRepository.findByCustomerId(user.getId());
-        return orderList.stream()
-                .map(OrderResponseDto::new)
+    public List<OrderSimpleResponseDto> findAllOrderForUser() {
+        return orderRepository.findByCustomerId(getUser().getId())
+                .stream()
+                .map(OrderSimpleResponseDto::new)
                 .toList();
     }
 
     @Override
     public List<OrderResponseDto> findOrderForOwner(Long shopId) {
+    public List<OrderSimpleResponseDto> findOrderForOwner(Long shopId) {
         //가게 검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -131,12 +131,12 @@ public class OrderServiceImp implements OrderService {
             throw new ApiException(OrderErrorCode.NOT_FOUND);
         }
         return orderList.stream()
-                .map(OrderResponseDto::new)
+                .map(OrderSimpleResponseDto::new)
                 .toList();
     }
 
     @Override
-    public OrderResponseDto updateStatus(Long shopId, Long orderId, OrderStatusUpdateDto dto) {
+    public OrderSimpleResponseDto updateStatus(Long shopId, Long orderId, OrderStatusUpdateDto dto) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -147,7 +147,7 @@ public class OrderServiceImp implements OrderService {
 
         order.updateStatus(dto.getStatus());
 
-        return new OrderResponseDto(order);
+        return new OrderSimpleResponseDto(order);
     }
 
     @Override
@@ -162,5 +162,6 @@ public class OrderServiceImp implements OrderService {
                 .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
         order.reject(dto.getRejectReason());
     }
+
 
 }

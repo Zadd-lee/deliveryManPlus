@@ -5,12 +5,10 @@ import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface OrderService {
     void createOrder();
 
-    List<OrderDetailResponseDto> findOrderForOwner(Long shopId);
+    Page<OrderDetailResponseDto> findOrderForOwner(Long shopId, int page, int size);
 
     void updateStatus(Long shopId, Long orderId, OrderStatus orderStatus);
 

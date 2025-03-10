@@ -9,12 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select o from Order o where o.shop.id = :shopId")
-    List<Order> findByShopId(@Param("shopId") Long shopId);
+    Page<Order> findByShopId(@Param("shopId") Long shopId, Pageable pageable);
 
 
     default Order findByIdOrElseThrow(Long orderId) {

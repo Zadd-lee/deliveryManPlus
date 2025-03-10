@@ -2,6 +2,7 @@ package com.deliveryManPlus.coupon.entity;
 
 import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,10 @@ public class CouponBrand {
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    @Builder
+    public CouponBrand(Coupon coupon, Shop shop) {
+        this.coupon = coupon;
+        this.shop = shop;
+    }
 }

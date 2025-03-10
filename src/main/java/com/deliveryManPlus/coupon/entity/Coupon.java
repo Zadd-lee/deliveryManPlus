@@ -1,12 +1,14 @@
 package com.deliveryManPlus.coupon.entity;
 
 import com.deliveryManPlus.common.entity.CreateDateEntity;
+import com.deliveryManPlus.common.utils.StringUtils;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +23,25 @@ public class Coupon extends CreateDateEntity {
     private String name;
     private String code;
     private BigDecimal discountPrice;
-    private LocalDateTime expiredAt;
-    private boolean useYn;
+
+    private LocalDate startAt;
+    private LocalDate expiredAt;
 
 
-    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CouponBrand> couponBrandList = new ArrayList<>();
 
+    @Builder
+    public Coupon(String name, String code, BigDecimal discountPrice, LocalDate startAt,LocalDate expiredAt) {
+        this.name = name;
+        this.code = code;
+        this.discountPrice = discountPrice;
+        this.startAt = startAt;
+        this.expiredAt = expiredAt;
+        this.code = StringUtils.generateRandomCode(10);
+    }
+
+    public void addCouponBrand(CouponBrand couponBrand) {
+        couponBrandList.add(couponBrand);
+    }
 }

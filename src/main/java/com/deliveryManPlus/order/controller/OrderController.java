@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,9 @@ public class OrderController {
     }
 
     @GetMapping("/user/order")
-    public ResponseEntity<List<OrderSimpleResponseDto>> findAllOrderForUser() {
-        return new ResponseEntity<>(orderService.findAllOrderForUser(), HttpStatus.OK);
+    public ResponseEntity<Page<OrderSimpleResponseDto>> findAllOrderForUser(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                                            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return new ResponseEntity<>(orderService.findAllOrderForUser(page,size), HttpStatus.OK);
     }
     @GetMapping("/user/order/{orderId}")
     public ResponseEntity<OrderDetailResponseDto> findOrderForUser(@PathVariable(name = "orderId") Long orderId) {

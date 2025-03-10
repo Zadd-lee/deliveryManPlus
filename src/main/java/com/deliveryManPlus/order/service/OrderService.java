@@ -3,6 +3,7 @@ package com.deliveryManPlus.order.service;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface OrderService {
 
     void reject(Long shopId, Long orderId, String rejectReason);
 
-    List<OrderSimpleResponseDto> findAllOrderForUser();
+    Page<OrderSimpleResponseDto> findAllOrderForUser(int page, int size);
 
     OrderDetailResponseDto findOrderForUser(Long orderId);
 }

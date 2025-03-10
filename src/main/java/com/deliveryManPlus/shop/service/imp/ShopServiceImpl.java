@@ -1,22 +1,23 @@
 package com.deliveryManPlus.shop.service.imp;
 
-import com.deliveryManPlus.shop.constant.ShopStatus;
+import com.deliveryManPlus.auth.entity.User;
+import com.deliveryManPlus.category.entity.Category;
+import com.deliveryManPlus.category.repository.CategoryRepository;
 import com.deliveryManPlus.common.constant.Status;
+import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.CategoryErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
-import com.deliveryManPlus.category.entity.Category;
+import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.dto.*;
 import com.deliveryManPlus.shop.entity.Shop;
-import com.deliveryManPlus.auth.entity.User;
-import com.deliveryManPlus.common.exception.ApiException;
-import com.deliveryManPlus.category.repository.CategoryRepository;
 import com.deliveryManPlus.shop.repository.ShopRepository;
 import com.deliveryManPlus.shop.service.ShopService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.deliveryManPlus.common.utils.EntityValidator.validate;
 
@@ -54,12 +55,9 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public List<ShopResponseDto> findAll(ShopSearchOptionDto dto) {
-
-        return shopRepository.findAll(dto.getCategoryId())
-                .stream()
-                .map(ShopResponseDto::new)
-                .toList();
+    public Page<ShopResponseDto> findAll(ShopSearchOptionDto dto, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return shopRepository.findAllByDto(dto, pageable).map(ShopResponseDto::new);
 
 
     }

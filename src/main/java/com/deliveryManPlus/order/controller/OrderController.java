@@ -11,11 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Order", description = "주문 API")
 @RestController
@@ -30,53 +29,57 @@ public class OrderController {
     }
 
     @GetMapping("/user/order")
-    public ResponseEntity<List<OrderSimpleResponseDto>> findAllOrderForUser() {
-        return new ResponseEntity<>(orderService.findAllOrderForUser(), HttpStatus.OK);
+    public ResponseEntity<Page<OrderSimpleResponseDto>> findAllOrderForUser(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                                            @RequestParam(name = "size", defaultValue = "10") int size) {
+        return new ResponseEntity<>(orderService.findAllOrderForUser(page, size), HttpStatus.OK);
     }
+
     @GetMapping("/user/order/{orderId}")
     public ResponseEntity<OrderDetailResponseDto> findOrderForUser(@PathVariable(name = "orderId") Long orderId) {
         return new ResponseEntity<>(orderService.findOrderForUser(orderId), HttpStatus.OK);
     }
 
     @Operation(summary = "주문 조회", description = "해당 식당의 주문을 조회합니다."
-            ,responses = {
+            , responses = {
             @ApiResponse(responseCode = "200", description = "주문 조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류"),
     }
-    ,parameters = {
+            , parameters = {
             @Parameter(name = "shopId", description = "식당 식별자", required = true, example = "1")
     })
     @GetMapping("/owner/{shopId}/order")
-    public ResponseEntity<List<OrderDetailResponseDto>> findOrderForOwner(@PathVariable(name = "shopId") Long shopId) {
-        return new ResponseEntity<>(orderService.findOrderForOwner(shopId), HttpStatus.OK);
+    public ResponseEntity<Page<OrderDetailResponseDto>> findOrderForOwner(@PathVariable(name = "shopId") Long shopId
+            , @RequestParam(name = "page", defaultValue = "0") int page
+            , @RequestParam(name = "size", defaultValue = "10") int size) {
+        return new ResponseEntity<>(orderService.findOrderForOwner(shopId,page,size), HttpStatus.OK);
     }
 
     @Operation(summary = "주문 상태 변경", description = "주문의 상태를 변경합니다."
-            ,responses = {
+            , responses = {
             @ApiResponse(responseCode = "200", description = "주문 상태 변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류"),
     }
-    ,parameters = {
+            , parameters = {
             @Parameter(name = "shopId", description = "식당 식별자", required = true, example = "1"),
             @Parameter(name = "orderId", description = "주문 식별자", required = true, example = "1")
     })
     @PutMapping("/owner/{shopId}/order/{orderId}")
     public ResponseEntity<Void> updateStatus(@PathVariable(name = "shopId") Long shopId,
-                                                               @PathVariable(name = "orderId") Long orderId,
-                                                               @Valid @RequestBody OrderStatusUpdateDto dto) {
+                                             @PathVariable(name = "orderId") Long orderId,
+                                             @Valid @RequestBody OrderStatusUpdateDto dto) {
         orderService.updateStatus(shopId, orderId, dto.getStatus());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "주문 거절", description = "주문을 거절합니다."
-            ,responses = {
+            , responses = {
             @ApiResponse(responseCode = "200", description = "주문 거절 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류"),
     }
-    ,parameters = {
+            , parameters = {
             @Parameter(name = "shopId", description = "식당 식별자", required = true, example = "1"),
             @Parameter(name = "orderId", description = "주문 식별자", required = true, example = "1")
     })

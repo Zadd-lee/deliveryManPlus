@@ -3,19 +3,18 @@ package com.deliveryManPlus.order.service;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface OrderService {
     void createOrder();
 
-    List<OrderDetailResponseDto> findOrderForOwner(Long shopId);
+    Page<OrderDetailResponseDto> findOrderForOwner(Long shopId, int page, int size);
 
     void updateStatus(Long shopId, Long orderId, OrderStatus orderStatus);
 
     void reject(Long shopId, Long orderId, String rejectReason);
 
-    List<OrderSimpleResponseDto> findAllOrderForUser();
+    Page<OrderSimpleResponseDto> findAllOrderForUser(int page, int size);
 
     OrderDetailResponseDto findOrderForUser(Long orderId);
 }

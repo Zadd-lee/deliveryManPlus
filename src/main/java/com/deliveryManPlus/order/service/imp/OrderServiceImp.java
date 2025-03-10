@@ -5,23 +5,26 @@ import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.cart.repository.CartMenuOptionDetailRepository;
 import com.deliveryManPlus.cart.repository.CartMenuRepository;
 import com.deliveryManPlus.cart.repository.CartRepository;
+import com.deliveryManPlus.common.constant.OrderBy;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
-import com.deliveryManPlus.menu.repository.MenuRepository;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.entity.OrderMenu;
 import com.deliveryManPlus.order.entity.OrderMenuOptionDetail;
 import com.deliveryManPlus.order.repository.OrderMenuOptionDetailRepository;
-import com.deliveryManPlus.order.repository.OrderMenuRepository;
 import com.deliveryManPlus.order.repository.OrderRepository;
 import com.deliveryManPlus.order.service.OrderService;
 import com.deliveryManPlus.shop.entity.Shop;
 import com.deliveryManPlus.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +38,6 @@ import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
 public class OrderServiceImp implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final MenuRepository menuRepository;
-    private final OrderMenuRepository orderMenuRepository;
     private final OrderMenuOptionDetailRepository orderMenuOptionDetailRepository;
     private final ShopRepository shopRepository;
     private final CartRepository cartRepository;
@@ -93,11 +94,10 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public List<OrderSimpleResponseDto> findAllOrderForUser() {
-        return orderRepository.findByCustomerId(getUser().getId())
-                .stream()
-                .map(OrderSimpleResponseDto::new)
-                .toList();
+    public Page<OrderSimpleResponseDto> findAllOrderForUser(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(OrderBy.UPDATED_DATE.getName()).descending());
+        return orderRepository.findByCustomer_Id(getUser().getId(), pageable)
+                .map(OrderSimpleResponseDto::new);
     }
 
     @Override
@@ -110,21 +110,17 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public List<OrderDetailResponseDto> findOrderForOwner(Long shopId) {
+    public Page<OrderDetailResponseDto> findOrderForOwner(Long shopId, int page, int size) {
         //가게 검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
         validate(shop);
 
-        List<Order> orderList = orderRepository.findByShopId(shopId);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(OrderBy.UPDATED_DATE.getName()).descending());
 
         //주문 검증
-        if(orderList.isEmpty()){
-            throw new ApiException(OrderErrorCode.NOT_FOUND);
-        }
-        return orderList.stream()
-                .map(OrderDetailResponseDto::new)
-                .toList();
+        return orderRepository.findByShopId(shopId, pageable)
+                .map(OrderDetailResponseDto::new);
     }
 
     @Transactional

@@ -1,21 +1,21 @@
 package com.deliveryManPlus.category.service.imp;
 
-import com.deliveryManPlus.common.constant.Status;
-import com.deliveryManPlus.common.exception.constant.errorcode.CategoryErrorCode;
 import com.deliveryManPlus.category.dto.CategoryCreateRequestDto;
 import com.deliveryManPlus.category.dto.CategoryResponseDto;
 import com.deliveryManPlus.category.dto.CategorySearchRequestDto;
 import com.deliveryManPlus.category.dto.CategoryUpdateRequestDto;
 import com.deliveryManPlus.category.entity.Category;
-import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.category.repository.CategoryRepository;
 import com.deliveryManPlus.category.service.CategoryService;
+import com.deliveryManPlus.common.constant.Status;
+import com.deliveryManPlus.common.exception.ApiException;
+import com.deliveryManPlus.common.exception.constant.errorcode.CategoryErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -35,21 +35,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponseDto> getCategoryList(CategorySearchRequestDto dto) {
-
-        return categoryRepository.findAll().stream()
-                .filter(getStatusPredicate(dto.getUseYn()))
-                .map(CategoryResponseDto::new)
-                .toList();
+    public Page<CategoryResponseDto> getCategoryList(CategorySearchRequestDto dto, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size,dto.getSort());
+        return categoryRepository.findAllByDto(pageable, dto).map(CategoryResponseDto::new);
     }
-
-        private Predicate<Category> getStatusPredicate(String useYn) {
-            return switch (useYn) {
-                case "Y" -> category -> category.getStatus() == Status.USE;
-                case "N" -> category -> category.getStatus() == Status.DELETED;
-                default -> category -> true;
-            };
-        }
 
 
     @Transactional

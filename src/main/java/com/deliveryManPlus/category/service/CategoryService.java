@@ -4,13 +4,12 @@ import com.deliveryManPlus.category.dto.CategoryCreateRequestDto;
 import com.deliveryManPlus.category.dto.CategoryResponseDto;
 import com.deliveryManPlus.category.dto.CategorySearchRequestDto;
 import com.deliveryManPlus.category.dto.CategoryUpdateRequestDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface CategoryService {
     void createCategory(CategoryCreateRequestDto dto);
 
-    List<CategoryResponseDto> getCategoryList(CategorySearchRequestDto dto);
+    Page<CategoryResponseDto> getCategoryList(CategorySearchRequestDto dto, int page, int size);
 
     void updateCategory(Long categoryId, CategoryUpdateRequestDto dto);
 

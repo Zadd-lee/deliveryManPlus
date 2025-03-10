@@ -9,11 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Category", description = "카테고리 API")
 @RestController
@@ -41,8 +40,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/category")
-    public ResponseEntity<List<CategoryResponseDto>> getCategoryList(@RequestBody CategorySearchRequestDto dto) {
-        return new ResponseEntity<>(categoryService.getCategoryList(dto), HttpStatus.OK);
+    public ResponseEntity<Page<CategoryResponseDto>> getCategoryList(@RequestBody CategorySearchRequestDto dto,
+                                                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                     @RequestParam(name = "size", defaultValue = "10") int size) {
+        return new ResponseEntity<>(categoryService.getCategoryList(dto,page,size), HttpStatus.OK);
     }
 
     @Operation(summary = "카테고리 수정", description = "카테고리를 수정합니다."

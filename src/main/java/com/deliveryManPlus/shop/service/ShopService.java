@@ -1,16 +1,15 @@
 package com.deliveryManPlus.shop.service;
 
-import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.auth.entity.User;
+import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.dto.*;
 import jakarta.validation.Valid;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ShopService {
     void create(User userId, @Valid ShopCreateRequestDto dto);
 
-    List<ShopResponseDto> findAll(ShopSearchOptionDto dto);
+    Page<ShopResponseDto> findAll(ShopSearchOptionDto dto, int page, int size);
 
     ShopDetailResponseDto findById(Long shopId);
 

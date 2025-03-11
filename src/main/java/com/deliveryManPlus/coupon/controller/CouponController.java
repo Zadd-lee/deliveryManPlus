@@ -1,14 +1,14 @@
 package com.deliveryManPlus.coupon.controller;
 
 import com.deliveryManPlus.coupon.dto.CouponCreateRequestDto;
+import com.deliveryManPlus.coupon.dto.CouponResponseDto;
 import com.deliveryManPlus.coupon.service.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,5 +18,11 @@ public class CouponController {
     public ResponseEntity<Void> createCoupon(@Valid @RequestBody CouponCreateRequestDto requestDto) {
         couponService.createCoupon(requestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/admin/coupon")
+    public ResponseEntity<Page<CouponResponseDto>> getCouponList(@RequestParam(name = "page", defaultValue = "0" ) int page,
+                                                                 @RequestParam(name = "size", defaultValue = "10") int size) {
+        return new ResponseEntity<>(couponService.getCouponList(page, size), HttpStatus.OK);
     }
 }

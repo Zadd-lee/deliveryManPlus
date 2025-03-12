@@ -17,6 +17,8 @@ import com.deliveryManPlus.common.exception.constant.errorcode.CartErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuOptionErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
+import com.deliveryManPlus.coupon.entity.Coupon;
+import com.deliveryManPlus.coupon.repository.CouponRepository;
 import com.deliveryManPlus.menu.entity.Menu;
 import com.deliveryManPlus.menu.entity.MenuOption;
 import com.deliveryManPlus.menu.repository.MenuOptionDetailRepository;
@@ -27,6 +29,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +48,7 @@ public class CartServiceImpl implements CartService {
     private final MenuOptionDetailRepository menuOptionDetailRepository;
     private final CartMenuRepository cartMenuRepository;
     private final CartMenuOptionDetailRepository cartMenuOptionDetailRepository;
+    private final CouponRepository couponRepository;
 
     @Transactional
     @Override
@@ -95,9 +99,16 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartResponseDto findCartList() {
-        Cart cart = cartRepository.findByCustomerIdOrElseThrow(getUser().getId());
+        User user = getUser();
+        Cart cart = cartRepository.findByCustomerIdOrElseThrow(user.getId());
 
-        return new CartResponseDto(cart);
+        List<Coupon> coupons = cart.getCartMenuList().isEmpty() ?
+                Collections.emptyList() :
+                couponRepository.findAvailableByCustomer(user, cart.getCartMenuList().get(0).getMenu().getShop())
+                        .stream()
+                        .toList();
+
+        return new CartResponseDto(cart, coupons);
 
     }
 
@@ -131,7 +142,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public void updateCartMenuQuantity(Long menuId, int quantity) {
-           Cart cart = cartRepository.findByCustomerIdOrElseThrow(getUser().getId());
+        Cart cart = cartRepository.findByCustomerIdOrElseThrow(getUser().getId());
 
         CartMenu cartMenu = cart.getCartMenuList().stream()
                 .filter(x -> x.getMenu().getId().equals(menuId))
@@ -144,7 +155,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public void deleteCartMenu(Long menuId) {
-        cartMenuRepository.deleteByMenuAndCustomerId(menuId,getUser().getId());
+        cartMenuRepository.deleteByMenuAndCustomerId(menuId, getUser().getId());
     }
 
     @Transactional

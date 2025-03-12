@@ -35,6 +35,10 @@ public class Coupon extends CreateDateEntity {
     @OneToMany(mappedBy = "coupon", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CouponBrand> couponBrandList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "coupon")
+    private List<CouponUser> couponUserList = new ArrayList<>();
+
+
     @Builder
     public Coupon(String name, String code, BigDecimal discountPrice,Integer quantity, LocalDate startAt,LocalDate expiredAt) {
         this.name = name;

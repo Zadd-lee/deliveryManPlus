@@ -25,6 +25,8 @@ public class Coupon extends CreateDateEntity {
     private String code;
     private BigDecimal discountPrice;
 
+    private Integer quantity;
+
     private LocalDate startAt;
     private LocalDate expiredAt;
 
@@ -33,10 +35,11 @@ public class Coupon extends CreateDateEntity {
     private List<CouponBrand> couponBrandList = new ArrayList<>();
 
     @Builder
-    public Coupon(String name, String code, BigDecimal discountPrice, LocalDate startAt,LocalDate expiredAt) {
+    public Coupon(String name, String code, BigDecimal discountPrice,Integer quantity, LocalDate startAt,LocalDate expiredAt) {
         this.name = name;
         this.code = code;
         this.discountPrice = discountPrice;
+        this.quantity = quantity;
         this.startAt = startAt;
         this.expiredAt = expiredAt;
         this.code = StringUtils.generateRandomCode(10);

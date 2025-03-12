@@ -16,4 +16,5 @@ public interface CouponService {
 
     void updateCoupon(Long couponId, @Valid CouponUpdateRequestDto requestDto);
 
+    void deleteCoupon(Long couponId);
 }

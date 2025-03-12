@@ -41,4 +41,10 @@ public class CouponController {
         couponService.updateCoupon(couponId, requestDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping("/admin/coupon/{couponId}")
+    public ResponseEntity<Void> deleteCoupon(@PathVariable(name = "couponId") Long couponId) {
+        couponService.deleteCoupon(couponId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

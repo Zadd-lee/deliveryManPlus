@@ -80,6 +80,12 @@ public class CouponServiceImpl implements CouponService {
 
     }
 
+    @Transactional
+    @Override
+    public void deleteCoupon(Long couponId) {
+        couponRepository.deleteById(couponId);
+    }
+
     private static void validDate(LocalDate startAt, LocalDate expiredAt) {
         if (startAt.isBefore(LocalDate.now())) {
             throw new ApiException(CouponErrorCode.INVALID_START_AT);

@@ -10,4 +10,5 @@ import java.math.BigDecimal;
 public class CouponUpdateRequestDto {
     private String name;
     private BigDecimal discountPrice;
+    private Integer quantity;
 }

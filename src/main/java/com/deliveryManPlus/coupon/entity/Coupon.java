@@ -1,5 +1,6 @@
 package com.deliveryManPlus.coupon.entity;
 
+import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.entity.CreateDateEntity;
 import com.deliveryManPlus.common.utils.StringUtils;
 import com.deliveryManPlus.coupon.dto.CouponUpdateRequestDto;
@@ -57,5 +58,14 @@ public class Coupon extends CreateDateEntity {
     public void updateByDto(CouponUpdateRequestDto requestDto) {
         this.name = requestDto.getName()==null?this.name:requestDto.getName();
         this.discountPrice = requestDto.getDiscountPrice()==null?this.discountPrice:requestDto.getDiscountPrice();
+    }
+
+    public CouponUser useCoupon(User user) {
+        this.quantity--;
+
+        return CouponUser.builder()
+                .coupon(this)
+                .customer(user)
+                .build();
     }
 }

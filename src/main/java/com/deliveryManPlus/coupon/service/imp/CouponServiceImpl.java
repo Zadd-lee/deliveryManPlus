@@ -1,5 +1,6 @@
 package com.deliveryManPlus.coupon.service.imp;
 
+import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.CouponErrorCode;
 import com.deliveryManPlus.coupon.dto.CouponCreateRequestDto;
@@ -8,12 +9,15 @@ import com.deliveryManPlus.coupon.dto.CouponUpdateDateRequestDto;
 import com.deliveryManPlus.coupon.dto.CouponUpdateRequestDto;
 import com.deliveryManPlus.coupon.entity.Coupon;
 import com.deliveryManPlus.coupon.entity.CouponBrand;
+import com.deliveryManPlus.coupon.entity.CouponUser;
 import com.deliveryManPlus.coupon.repository.CouponBrandRepository;
 import com.deliveryManPlus.coupon.repository.CouponRepository;
+import com.deliveryManPlus.coupon.repository.CouponUserRepository;
 import com.deliveryManPlus.coupon.service.CouponService;
 import com.deliveryManPlus.shop.entity.Shop;
 import com.deliveryManPlus.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +26,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
+
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
     private final ShopRepository shopRepository;
     private final CouponBrandRepository couponBrandRepository;
+    private final CouponUserRepository couponUserRepository;
 
     @Transactional
     @Override
@@ -84,6 +92,31 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public void deleteCoupon(Long couponId) {
         couponRepository.deleteById(couponId);
+    }
+
+    @Transactional
+    @Override
+    public void useCoupon(String couponCode) {
+        Coupon coupon = couponRepository.findByCodeOrElseThrows(couponCode);
+        validCouponQuantity(coupon);
+        User customer = getUser();
+
+        if(couponUserRepository.existsByCouponAndCustomer(coupon, customer)){
+            throw new ApiException(CouponErrorCode.ALREADY_USE_COUPON);
+        }
+
+
+        CouponUser couponUser = coupon.useCoupon(customer);
+        couponUserRepository.save(couponUser);
+
+    }
+
+    private static void validCouponQuantity(Coupon coupon) {
+        if (coupon.getQuantity() == 0) {
+            throw new ApiException(CouponErrorCode.COUPON_QUANTITY_ZERO);
+        } else if (coupon.getQuantity()<0) {
+            log.warn("쿠폰의 수량이 음수입니다. couponId: {}", coupon.getId());
+        }
     }
 
     private static void validDate(LocalDate startAt, LocalDate expiredAt) {

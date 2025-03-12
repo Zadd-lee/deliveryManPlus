@@ -3,6 +3,7 @@ package com.deliveryManPlus.coupon.entity;
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.entity.CreateDateEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,11 @@ public class CouponUser extends CreateDateEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User customer;
+
+    @Builder
+    public CouponUser(Coupon coupon, User customer) {
+        this.coupon = coupon;
+        this.customer = customer;
+        this.useYn = false;
+    }
 }

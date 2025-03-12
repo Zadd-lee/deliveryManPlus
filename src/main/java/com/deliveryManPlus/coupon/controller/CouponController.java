@@ -47,4 +47,10 @@ public class CouponController {
         couponService.deleteCoupon(couponId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/user/coupon/{couponCode}")
+    public ResponseEntity<Void> useCoupon(@PathVariable(name = "couponCode") String couponCode) {
+        couponService.useCoupon(couponCode);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -44,4 +44,9 @@ public class Coupon extends CreateDateEntity {
     public void addCouponBrand(CouponBrand couponBrand) {
         couponBrandList.add(couponBrand);
     }
+
+    public void updateDate(LocalDate startAt, LocalDate expiredAt) {
+        this.startAt = startAt==null?this.startAt:startAt;
+        this.expiredAt = expiredAt==null?this.expiredAt:expiredAt;
+    }
 }

@@ -2,6 +2,7 @@ package com.deliveryManPlus.coupon.controller;
 
 import com.deliveryManPlus.coupon.dto.CouponCreateRequestDto;
 import com.deliveryManPlus.coupon.dto.CouponResponseDto;
+import com.deliveryManPlus.coupon.dto.CouponUpdateDateRequestDto;
 import com.deliveryManPlus.coupon.service.CouponService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,13 @@ public class CouponController {
     public ResponseEntity<Page<CouponResponseDto>> getCouponList(@RequestParam(name = "page", defaultValue = "0" ) int page,
                                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
         return new ResponseEntity<>(couponService.getCouponList(page, size), HttpStatus.OK);
+    }
+
+    @PatchMapping("/admin/coupon/{couponId}")
+    public ResponseEntity<Void> updateDateCoupon(@PathVariable(name = "couponId") Long couponId, @Valid @RequestBody CouponUpdateDateRequestDto requestDto) {
+        couponService.updateCouponDate(couponId, requestDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

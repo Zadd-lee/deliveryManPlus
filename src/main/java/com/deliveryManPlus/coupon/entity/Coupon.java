@@ -2,6 +2,7 @@ package com.deliveryManPlus.coupon.entity;
 
 import com.deliveryManPlus.common.entity.CreateDateEntity;
 import com.deliveryManPlus.common.utils.StringUtils;
+import com.deliveryManPlus.coupon.dto.CouponUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,5 +49,10 @@ public class Coupon extends CreateDateEntity {
     public void updateDate(LocalDate startAt, LocalDate expiredAt) {
         this.startAt = startAt==null?this.startAt:startAt;
         this.expiredAt = expiredAt==null?this.expiredAt:expiredAt;
+    }
+
+    public void updateByDto(CouponUpdateRequestDto requestDto) {
+        this.name = requestDto.getName()==null?this.name:requestDto.getName();
+        this.discountPrice = requestDto.getDiscountPrice()==null?this.discountPrice:requestDto.getDiscountPrice();
     }
 }

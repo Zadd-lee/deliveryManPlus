@@ -5,6 +5,7 @@ import com.deliveryManPlus.common.exception.constant.errorcode.CouponErrorCode;
 import com.deliveryManPlus.coupon.dto.CouponCreateRequestDto;
 import com.deliveryManPlus.coupon.dto.CouponResponseDto;
 import com.deliveryManPlus.coupon.dto.CouponUpdateDateRequestDto;
+import com.deliveryManPlus.coupon.dto.CouponUpdateRequestDto;
 import com.deliveryManPlus.coupon.entity.Coupon;
 import com.deliveryManPlus.coupon.entity.CouponBrand;
 import com.deliveryManPlus.coupon.repository.CouponBrandRepository;
@@ -66,6 +67,16 @@ public class CouponServiceImpl implements CouponService {
         validateCouponDto(requestDto, coupon);
 
         coupon.updateDate(requestDto.getStartAt(), requestDto.getExpiredAt());
+
+    }
+
+    @Transactional
+    @Override
+    public void updateCoupon(Long couponId, CouponUpdateRequestDto requestDto) {
+        Coupon coupon = couponRepository.findByIdOrElseThrows(couponId);
+        validDate(coupon.getStartAt(), coupon.getExpiredAt());
+
+        coupon.updateByDto(requestDto);
 
     }
 

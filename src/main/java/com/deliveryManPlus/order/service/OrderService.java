@@ -6,7 +6,7 @@ import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import org.springframework.data.domain.Page;
 
 public interface OrderService {
-    void createOrder();
+    void createOrder(Long couponId);
 
     Page<OrderDetailResponseDto> findOrderForOwner(Long shopId, int page, int size);
 

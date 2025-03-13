@@ -1,5 +1,6 @@
 package com.deliveryManPlus.order.service.imp;
 
+import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.cart.repository.CartMenuOptionDetailRepository;
@@ -7,9 +8,13 @@ import com.deliveryManPlus.cart.repository.CartMenuRepository;
 import com.deliveryManPlus.cart.repository.CartRepository;
 import com.deliveryManPlus.common.constant.OrderBy;
 import com.deliveryManPlus.common.exception.ApiException;
+import com.deliveryManPlus.common.exception.constant.errorcode.CouponErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
+import com.deliveryManPlus.coupon.entity.CouponUser;
+import com.deliveryManPlus.coupon.repository.CouponRepository;
+import com.deliveryManPlus.coupon.repository.CouponUserRepository;
 import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
 import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
 import com.deliveryManPlus.order.entity.Order;
@@ -43,17 +48,33 @@ public class OrderServiceImp implements OrderService {
     private final CartRepository cartRepository;
     private final CartMenuRepository cartMenuRepository;
     private final CartMenuOptionDetailRepository cartMenuOptionDetailRepository;
+    private final CouponRepository couponRepository;
+    private final CouponUserRepository couponUserRepository;
 
 
     @Transactional
     @Override
-    public void createOrder() {
-        Cart cart = cartRepository.findByCustomerIdDesc(getUser().getId())
+    public void createOrder(Long couponId) {
+        User user = getUser();
+        Cart cart = cartRepository.findByCustomerIdDesc(user.getId())
                 .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
 
 
         //주문 생성
         Order order = new Order(cart);
+
+        //coupon 적용
+        if (couponId != null) {
+            CouponUser couponUser = couponUserRepository.findByCustomerAndCouponId(user, couponId)
+                    .orElseThrow(() -> new ApiException(CouponErrorCode.NOT_FOUND));
+
+            if (order.getTotalPrice().compareTo(couponUser.getCoupon().getDiscountPrice())<0) {
+                throw new ApiException(OrderErrorCode.INVALID_COUPON);
+            }
+
+            order.updateCouponUser(couponUser);
+            couponUser.useCoupon(order);
+        }
 
         //order menu 생성
         List<OrderMenu> orderMenuList = cart.getCartMenuList()

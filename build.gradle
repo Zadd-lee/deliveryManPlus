@@ -35,8 +35,18 @@ dependencies {
 	testImplementation 'org.springframework.batch:spring-batch-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	//비밀번호 암호화
-	implementation 'at.favre.lib:bcrypt:0.10.2'
+
+	//spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// JWT
+	compileOnly 'io.jsonwebtoken:jjwt-api:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+	//swagger
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.1'
+
 }
 
 tasks.named('test') {

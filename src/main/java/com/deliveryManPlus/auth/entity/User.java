@@ -20,14 +20,19 @@ public class User extends CreateAndUpdateDateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nickname;
     private LocalDate birthday;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private LocalDate canceledDate;
 
     @OneToMany(mappedBy = "user")
     List<BasicAuth> basicAuthList;
@@ -47,5 +52,10 @@ public class User extends CreateAndUpdateDateEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void leave() {
+        this.status = Status.DELETED;
+        this.canceledDate = LocalDate.now();
     }
 }

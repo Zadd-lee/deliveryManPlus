@@ -2,7 +2,7 @@ package com.deliveryManPlus.review.entity;
 
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.constant.Status;
-import com.deliveryManPlus.common.entity.CreateDateEntity;
+import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
-public class Review  extends CreateDateEntity {
+public class Review  extends CreateAndUpdateDateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

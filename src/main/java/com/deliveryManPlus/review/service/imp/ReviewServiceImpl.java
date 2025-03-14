@@ -6,10 +6,13 @@ import com.deliveryManPlus.common.exception.constant.errorcode.ReviewErrorCode;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.repository.OrderRepository;
 import com.deliveryManPlus.review.dto.ReviewCreateRequestDto;
+import com.deliveryManPlus.review.dto.ReviewForCustomerResponseDto;
 import com.deliveryManPlus.review.entity.Review;
 import com.deliveryManPlus.review.repository.ReviewRepository;
 import com.deliveryManPlus.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,4 +44,12 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.save(review);
 
     }
+
+    @Override
+    public Page<ReviewForCustomerResponseDto> getReviewForUserList(Pageable pageable) {
+        return reviewRepository.findByCustomer(getUser(), pageable)
+                .map(ReviewForCustomerResponseDto::new);
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.deliveryManPlus.review.service.imp;
 
+import com.deliveryManPlus.auth.constant.Role;
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.ReviewErrorCode;
@@ -58,12 +59,27 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.findByShopId(shopId, pageable)
                 .map(r ->
                         new ReviewForShopResponseDto(r, getReviewQuantity(r), getReviewAvg(r))
-        );
+                );
     }
 
     @Override
     public ReviewForCustomerResponseDto getReview(Long reviewId) {
         return new ReviewForCustomerResponseDto(reviewRepository.findByIdOrElseThrow(reviewId));
+    }
+
+    @Transactional
+    @Override
+    public void deleteReview(Long reviewId) {
+        User user = getUser();
+        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
+
+        //validate user
+        if(user.getRole()!= Role.ADMIN &&!review.getCustomer().getId().equals(user.getId())){
+            throw new ApiException(ReviewErrorCode.NOT_AUTHORIZED);
+        }
+
+        review.delete();
+
     }
 
     private static double getReviewAvg(Review r) {

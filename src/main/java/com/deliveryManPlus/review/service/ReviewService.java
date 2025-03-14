@@ -16,4 +16,5 @@ public interface ReviewService {
 
     ReviewForCustomerResponseDto getReview(Long reviewId);
 
+    void deleteReview(Long reviewId);
 }

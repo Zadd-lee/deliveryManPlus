@@ -44,4 +44,8 @@ public class Review  extends CreateDateEntity {
         this.shop = shop;
         this.order = order;
     }
+
+    public void delete() {
+        this.status = Status.DELETED;
+    }
 }

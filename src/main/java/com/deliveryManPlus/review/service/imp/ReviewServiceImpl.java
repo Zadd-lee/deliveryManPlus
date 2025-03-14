@@ -61,6 +61,11 @@ public class ReviewServiceImpl implements ReviewService {
         );
     }
 
+    @Override
+    public ReviewForCustomerResponseDto getReview(Long reviewId) {
+        return new ReviewForCustomerResponseDto(reviewRepository.findByIdOrElseThrow(reviewId));
+    }
+
     private static double getReviewAvg(Review r) {
         return r.getCustomer().getReviewList()
                 .stream()

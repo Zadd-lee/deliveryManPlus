@@ -13,4 +13,7 @@ public interface ReviewService {
     Page<ReviewForCustomerResponseDto> getReviewForUserList(Pageable pageable);
 
     Page<ReviewForShopResponseDto> getReviewForShopList(Pageable pageable, Long shopId);
+
+    ReviewForCustomerResponseDto getReview(Long reviewId);
+
 }

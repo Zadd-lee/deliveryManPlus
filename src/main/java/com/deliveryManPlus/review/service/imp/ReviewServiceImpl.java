@@ -7,6 +7,7 @@ import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.repository.OrderRepository;
 import com.deliveryManPlus.review.dto.ReviewCreateRequestDto;
 import com.deliveryManPlus.review.dto.ReviewForCustomerResponseDto;
+import com.deliveryManPlus.review.dto.ReviewForShopResponseDto;
 import com.deliveryManPlus.review.entity.Review;
 import com.deliveryManPlus.review.repository.ReviewRepository;
 import com.deliveryManPlus.review.service.ReviewService;
@@ -39,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw new ApiException(ReviewErrorCode.ALREADY_REVIEWED);
         }
 
-        Review review = dto.toEntity(order,customer);
+        Review review = dto.toEntity(order, customer);
 
         reviewRepository.save(review);
 
@@ -49,6 +50,28 @@ public class ReviewServiceImpl implements ReviewService {
     public Page<ReviewForCustomerResponseDto> getReviewForUserList(Pageable pageable) {
         return reviewRepository.findByCustomer(getUser(), pageable)
                 .map(ReviewForCustomerResponseDto::new);
+    }
+
+    @Override
+    public Page<ReviewForShopResponseDto> getReviewForShopList(Pageable pageable, Long shopId) {
+
+        return reviewRepository.findByShopId(shopId, pageable)
+                .map(r ->
+                        new ReviewForShopResponseDto(r, getReviewQuantity(r), getReviewAvg(r))
+        );
+    }
+
+    private static double getReviewAvg(Review r) {
+        return r.getCustomer().getReviewList()
+                .stream()
+                .mapToInt(Review::getScore)
+                .average()
+                .orElse(0);
+    }
+
+    private static Integer getReviewQuantity(Review r) {
+        return r.getCustomer().getReviewList()
+                .size();
     }
 
 

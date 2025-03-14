@@ -2,6 +2,7 @@ package com.deliveryManPlus.review.controller;
 
 import com.deliveryManPlus.review.dto.ReviewCreateRequestDto;
 import com.deliveryManPlus.review.dto.ReviewForCustomerResponseDto;
+import com.deliveryManPlus.review.dto.ReviewForShopResponseDto;
 import com.deliveryManPlus.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,15 @@ public class ReviewController {
     public ResponseEntity<Page<ReviewForCustomerResponseDto>> getReviewForUserList(@PageableDefault Pageable pageable) {
         return new ResponseEntity<>(reviewService.getReviewForUserList(pageable),HttpStatus.OK);
     }
-    
+
+    @GetMapping("/shop/{shopId}/review")
+    public ResponseEntity<Page<ReviewForShopResponseDto>> getReviewForShopList(@PageableDefault Pageable pageable,
+                                                                               @PathVariable Long shopId) {
+        return new ResponseEntity<>(reviewService.getReviewForShopList(pageable,shopId),HttpStatus.OK);
+    }
+
+
+
+
+
 }

@@ -1,9 +1,6 @@
 package com.deliveryManPlus.auth.controller;
 
-import com.deliveryManPlus.auth.dto.TokenRequestDto;
-import com.deliveryManPlus.auth.dto.JwtAuthResponseDto;
-import com.deliveryManPlus.auth.dto.LoginRequestDto;
-import com.deliveryManPlus.auth.dto.SigninRequestDto;
+import com.deliveryManPlus.auth.dto.*;
 import com.deliveryManPlus.auth.service.AuthService;
 import com.deliveryManPlus.auth.utils.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,10 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -66,6 +60,12 @@ public class AuthController {
 
         authService.logout(jwtTokenProvider.resolveAccessToken(request));
 
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/leave")
+    public ResponseEntity<Void> leave(@Valid @RequestBody LeaveRequestDto leaveRequestDto) {
+        authService.leave(leaveRequestDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

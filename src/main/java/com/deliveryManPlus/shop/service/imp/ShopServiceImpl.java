@@ -34,9 +34,9 @@ public class ShopServiceImpl implements ShopService {
         shopRepository.findByRegistNumber(dto.getRegistNumber())
                 .ifPresent(shop -> {
                     if (shop.getStatus() != ShopStatus.CLOSED_DOWN) {
-                        throw new ApiException(ShopErrorCode.NOT_VALUABLE);
+                        throw new ApiException(ShopErrorCode.DUPLICATED_SHOP);
                     }
-                    throw new ApiException(ShopErrorCode.DUPLICATED_SHOP);
+                    throw new ApiException(ShopErrorCode.NOT_VALUABLE);
                 });
 
         Category category = categoryRepository.findByIdOrElseThrows(dto.getCategoryId());

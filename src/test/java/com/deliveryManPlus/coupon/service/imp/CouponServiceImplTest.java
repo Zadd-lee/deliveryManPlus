@@ -14,13 +14,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 
 import java.time.LocalDate;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,6 +64,61 @@ class CouponServiceImplTest {
 
         //then
         assertThat(coupon.getQuantity()).isEqualTo(quantity - 1);
+    }
+
+    @DisplayName("쿠폰 다수 발급")
+    @WithAnonymousUser
+    void useMultipleCoupon() {
+        //given
+        int quantity = 3;
+        Coupon coupon = Coupon.builder()
+                .quantity(quantity)
+                .build();
+        CouponUser couponUser = CouponUser.builder().build();
+
+        when(couponRepository.findByCodeOrElseThrows(any())).thenReturn(coupon);
+        when(couponUserRepository.save(any())).thenReturn(couponUser);
+
+        //when
+        couponService.useCoupon(coupon.getCode());
+
+        //then
+        assertThat(coupon.getQuantity()).isEqualTo(quantity - 2);
+    }
+
+    @Test
+    void testSecurityContextInMultiThread() {
+        AtomicReference<String> threadUsername = new AtomicReference<>();
+
+        userService.processInNewThread(() -> {
+            String username = userService.getAuthenticatedUsername();
+            threadUsername.set(username);
+        });
+
+        assertThat(threadUsername.get()).isEqualTo("mainUser");
+    }
+
+    @Test
+    void testSecurityContextIsolationBetweenThreads() {
+        AtomicReference<String> mainThreadUsername = new AtomicReference<>();
+        AtomicReference<String> childThreadUsername = new AtomicReference<>();
+
+        userService.processInNewThread(() -> {
+            // 자식 스레드의 SecurityContext 재설정
+            SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+            Authentication authentication = Mockito.mock(Authentication.class);
+
+            Mockito.when(authentication.getName()).thenReturn("childUser");
+            Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+
+            SecurityContextHolder.setContext(securityContext);
+            childThreadUsername.set(userService.getAuthenticatedUsername());
+        });
+
+        mainThreadUsername.set(userService.getAuthenticatedUsername());
+
+        assertThat(mainThreadUsername.get()).isEqualTo("mainUser");
+        assertThat(childThreadUsername.get()).isEqualTo("childUser");
     }
 
     @BeforeEach

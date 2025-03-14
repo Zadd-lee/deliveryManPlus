@@ -1,9 +1,9 @@
 package com.deliveryManPlus.menu.entity;
 
-import com.deliveryManPlus.common.exception.constant.errorcode.MenuStatus;
 import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
-import com.deliveryManPlus.shop.entity.Shop;
+import com.deliveryManPlus.common.exception.constant.errorcode.MenuStatus;
 import com.deliveryManPlus.menu.dto.menu.MenuUpdateRequestDto;
+import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

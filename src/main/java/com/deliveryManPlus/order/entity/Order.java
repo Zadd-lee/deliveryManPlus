@@ -6,6 +6,7 @@ import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.common.utils.Calculator;
+import com.deliveryManPlus.review.entity.Review;
 import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -42,6 +43,9 @@ public class Order extends CreateAndUpdateDateEntity {
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    @OneToMany(mappedBy = "order")
+    private List<Review> reviewList;
 
     @Builder
     public Order(User customer, Shop shop) {

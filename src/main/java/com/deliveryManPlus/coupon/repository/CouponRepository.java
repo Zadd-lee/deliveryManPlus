@@ -5,7 +5,9 @@ import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.CouponErrorCode;
 import com.deliveryManPlus.coupon.entity.Coupon;
 import com.deliveryManPlus.shop.entity.Shop;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     Optional<Coupon> findByCode(String couponCode);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     default Coupon findByCodeOrElseThrows(String couponCode) {
         return findByCode(couponCode).orElseThrow(() -> new ApiException(CouponErrorCode.NOT_FOUND));
     }

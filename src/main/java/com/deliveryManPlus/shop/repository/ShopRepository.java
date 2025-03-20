@@ -1,5 +1,7 @@
 package com.deliveryManPlus.shop.repository;
 
+import com.deliveryManPlus.common.exception.ApiException;
+import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
 import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.dto.ShopSearchOptionDto;
 import com.deliveryManPlus.shop.entity.Shop;
@@ -23,4 +25,10 @@ public interface ShopRepository extends JpaRepository<Shop,Long> {
     Optional<Shop> findByRegistNumber(String registNumber);
 
     Page<Shop> findAllByCategory_CategoryIdAndNameLikeAndStatusIsNot(Long categoryCategoryId, String name, ShopStatus status, Pageable pageable);
+
+    default Shop findByIdOrElseThrows(Long shopId) {
+        return findById(shopId)
+                .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
+    }
+
 }

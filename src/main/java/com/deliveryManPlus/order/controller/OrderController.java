@@ -1,9 +1,6 @@
 package com.deliveryManPlus.order.controller;
 
-import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
-import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
-import com.deliveryManPlus.order.dto.OrderStatusRejectDto;
-import com.deliveryManPlus.order.dto.OrderStatusUpdateDto;
+import com.deliveryManPlus.order.dto.*;
 import com.deliveryManPlus.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,8 +20,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/user/order")
-    public ResponseEntity<Void> createOrder() {
-        orderService.createOrder();
+    public ResponseEntity<Void> createOrder(@RequestBody OrderCreateRequestDto dto) {
+        orderService.createOrder(dto.getCouponId());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

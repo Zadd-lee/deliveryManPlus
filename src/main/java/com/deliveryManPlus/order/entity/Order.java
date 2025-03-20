@@ -6,6 +6,7 @@ import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.common.utils.Calculator;
+import com.deliveryManPlus.coupon.entity.CouponUser;
 import com.deliveryManPlus.review.entity.Review;
 import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
@@ -40,9 +41,13 @@ public class Order extends CreateAndUpdateDateEntity {
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private final List<OrderMenu> orderMenu = new ArrayList<>();
 
+
     @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private List<CouponUser> couponUserList = new ArrayList<>();
 
     @OneToMany(mappedBy = "order")
     private List<Review> reviewList;
@@ -85,5 +90,10 @@ public class Order extends CreateAndUpdateDateEntity {
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+    }
+
+    public void updateCouponUser(CouponUser couponUser) {
+        this.totalPrice = this.totalPrice.subtract(couponUser.getCoupon().getDiscountPrice());
+        this.couponUserList.add(couponUser);
     }
 }

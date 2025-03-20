@@ -1,11 +1,7 @@
 package com.deliveryManPlus.auth.service.imp;
 
-import com.deliveryManPlus.common.constant.Status;
-import com.deliveryManPlus.auth.dto.TokenRequestDto;
-import com.deliveryManPlus.auth.dto.JwtAuthResponseDto;
-import com.deliveryManPlus.auth.dto.LeaveRequestDto;
-import com.deliveryManPlus.auth.dto.LoginRequestDto;
-import com.deliveryManPlus.auth.dto.SigninRequestDto;
+import com.deliveryManPlus.auth.constant.UserPolicy;
+import com.deliveryManPlus.auth.dto.*;
 import com.deliveryManPlus.auth.entity.BasicAuth;
 import com.deliveryManPlus.auth.entity.RefreshToken;
 import com.deliveryManPlus.auth.entity.User;
@@ -14,6 +10,10 @@ import com.deliveryManPlus.auth.repository.RefreshTokenRepository;
 import com.deliveryManPlus.auth.repository.UserRepository;
 import com.deliveryManPlus.auth.service.AuthService;
 import com.deliveryManPlus.auth.utils.JwtTokenProvider;
+import com.deliveryManPlus.common.constant.Status;
+import com.deliveryManPlus.common.exception.ApiException;
+import com.deliveryManPlus.common.exception.constant.errorcode.AuthErrorCode;
+import com.deliveryManPlus.common.utils.SecurityUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -40,8 +43,15 @@ public class AuthServiceImp implements AuthService {
     @Override
     public void signin(SigninRequestDto dto) {
         //검증
-        if(authRepository.existsByEmail(dto.getEmail())){
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
+        Optional<BasicAuth> authByEmail = authRepository.findByEmail(dto.getEmail());
+        if(authByEmail.isPresent()){
+            User user = authByEmail.get().getUser();
+            if(user.getStatus().equals(Status.USE)){
+                throw new ApiException(AuthErrorCode.EXIST_USER);
+            }
+            if(!(user.getStatus().equals(Status.DELETED) && isCorrectPolicy(user))){
+                throw new ApiException(AuthErrorCode.CANCELED_USER);
+            }
         }
 
         //user 저장
@@ -54,7 +64,10 @@ public class AuthServiceImp implements AuthService {
 
         authRepository.save(basicAuth);
 
+    }
 
+    private boolean isCorrectPolicy(User user) {
+        return user.getCanceledDate().isBefore(LocalDate.now().minusMonths(UserPolicy.RESIGNIN_MONTHS.getMonths()));
     }
 
     @Override
@@ -76,12 +89,16 @@ public class AuthServiceImp implements AuthService {
     }
 
     @Override
-    public void leave(LeaveRequestDto dto, Long userId) {
+    public void leave(LeaveRequestDto dto) {
         //검증
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+        User user = SecurityUtils.getUser();
+        BasicAuth basicAuth = authRepository.findByUserOrElseThrow(user);
 
-        user.setStatus(Status.DELETED);
+        if(!basicAuth.getPassword().equals(dto.getPassword())){
+            throw new ApiException(AuthErrorCode.PASSWORD_INCORRECT);
+        }
+        
+        basicAuth.getUser().leave();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.deliveryManPlus.shop.entity;
 
 import com.deliveryManPlus.category.entity.Category;
+import com.deliveryManPlus.review.entity.Review;
 import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.auth.entity.User;
@@ -58,6 +59,10 @@ public class Shop extends CreateAndUpdateDateEntity {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+
+    @OneToMany(mappedBy = "shop")
+    private List<Review> reviewList;
 
     @Builder
     public Shop(String registNumber, String name, String address, BigDecimal minimumOrderAmount, ShopStatus status, String openAt, String closedAt, String closedDay) {

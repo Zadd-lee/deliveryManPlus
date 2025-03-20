@@ -7,6 +7,7 @@ import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
 import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
 import com.deliveryManPlus.common.utils.Calculator;
 import com.deliveryManPlus.coupon.entity.CouponUser;
+import com.deliveryManPlus.review.entity.Review;
 import com.deliveryManPlus.shop.entity.Shop;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -47,6 +48,9 @@ public class Order extends CreateAndUpdateDateEntity {
 
     @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
     private List<CouponUser> couponUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "order")
+    private List<Review> reviewList;
 
     @Builder
     public Order(User customer, Shop shop) {

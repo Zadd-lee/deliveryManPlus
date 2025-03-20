@@ -13,7 +13,7 @@ public interface AuthService {
 
     JwtAuthResponseDto login(@Valid LoginRequestDto dto);
 
-    void leave(LeaveRequestDto dto, Long authentication);
+    void leave(LeaveRequestDto dto);
 
     JwtAuthResponseDto refreshToken(TokenRequestDto refreshToken);
 

@@ -4,6 +4,7 @@ import com.deliveryManPlus.auth.constant.Role;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.common.constant.Status;
 import com.deliveryManPlus.common.entity.CreateAndUpdateDateEntity;
+import com.deliveryManPlus.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,20 +20,28 @@ public class User extends CreateAndUpdateDateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nickname;
     private LocalDate birthday;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private LocalDate canceledDate;
 
     @OneToMany(mappedBy = "user")
     List<BasicAuth> basicAuthList;
 
     @OneToMany(mappedBy = "customer")
     List<Cart> cartList;
+
+    @OneToMany(mappedBy = "customer")
+    List<Review> reviewList;
 
     public User(String nickname, LocalDate birthday, Role role) {
         this.nickname = nickname;
@@ -43,5 +52,10 @@ public class User extends CreateAndUpdateDateEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void leave() {
+        this.status = Status.DELETED;
+        this.canceledDate = LocalDate.now();
     }
 }

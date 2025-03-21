@@ -11,7 +11,10 @@ public class ImageTarget {
 
     public ImageTarget(Long targetId, String targetName) {
         this.targetId = targetId;
-        this.targetName = targetName.substring(targetName.indexOf("Service")).toUpperCase();
+        this.targetName = targetName.contains("Service")
+                ? targetName.substring(0,targetName.indexOf("Service")).toUpperCase()
+                : targetName.toUpperCase();
+
     }
 
     public ImageTarget() {

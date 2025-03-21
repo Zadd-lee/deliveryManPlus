@@ -49,7 +49,7 @@ public class ImageService {
 
     public List<Image> findImageByShopList(List<Long> shopIdList) {
         return shopIdList.stream()
-                .map(id -> imageRepository.findFirstByByImageTarget(new ImageTarget(id, "shop")))
+                .map(id -> imageRepository.findFirstByImageTarget(new ImageTarget(id, "shop")))
                 .toList();
     }
 }

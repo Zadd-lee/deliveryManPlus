@@ -7,6 +7,7 @@ import com.deliveryManPlus.common.constant.Status;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.CategoryErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
+import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.dto.*;
 import com.deliveryManPlus.shop.entity.Shop;
@@ -18,6 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.deliveryManPlus.common.utils.EntityValidator.validate;
 
@@ -28,8 +32,10 @@ public class ShopServiceImpl implements ShopService {
     private final ShopRepository shopRepository;
     private final CategoryRepository categoryRepository;
 
+    private final ImageService imageService;
+
     @Override
-    public void create(User user, ShopCreateRequestDto dto) {
+    public void create(User user, ShopCreateRequestDto dto, List<MultipartFile> imageList) {
         //검증
         shopRepository.findByRegistNumber(dto.getRegistNumber())
                 .ifPresent(shop -> {
@@ -44,7 +50,6 @@ public class ShopServiceImpl implements ShopService {
             throw new ApiException(CategoryErrorCode.NOT_VALUABLE);
         }
 
-
         Shop shop = dto.toEntity();
 
         shop.updateOwner(user);
@@ -52,6 +57,10 @@ public class ShopServiceImpl implements ShopService {
 
 
         shopRepository.save(shop);
+
+        //이미지 업로드
+        ImageTarget imageTarget = new ImageTarget(shop.getId(), this.getClass().getSimpleName());
+        imageService.save(imageTarget, imageList);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ImageName {
     public ImageName(String name) {
         this.name = generateName();
         this.originalName = name;
-        this.extension = name.substring(name.lastIndexOf("."));
+        this.extension = name.substring(name.lastIndexOf(".")+1);
     }
 
     public ImageName() {

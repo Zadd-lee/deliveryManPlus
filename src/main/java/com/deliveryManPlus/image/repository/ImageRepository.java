@@ -12,6 +12,6 @@ public interface ImageRepository extends JpaRepository<Image,Long> {
     @Query("select i.path from Image i where  i.imageTarget.targetId in :shopIdList")
     List<Image> findByShopIdIn(List<Long> shopIdList);
 
-    @Query("select i.path from Image i where i.imageTarget = :imageTarget")
-    String findFirstPathByByImageTarget(@Param("imageTarget") ImageTarget imageTarget);
+    @Query("select i from Image i where i.imageTarget = :imageTarget")
+    Image findFirstByByImageTarget(@Param("imageTarget") ImageTarget imageTarget);
 }

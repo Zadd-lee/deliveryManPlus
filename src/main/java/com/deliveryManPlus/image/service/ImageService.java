@@ -47,10 +47,9 @@ public class ImageService {
         imageRepository.saveAll(list);
     }
 
-    public List<String> findImageByShopList(List<Long> shopIdList) {
-        List<String> imagePathList = shopIdList.stream()
-                .map(id -> imageRepository.findFirstPathByByImageTarget(new ImageTarget(id, "shop")))
+    public List<Image> findImageByShopList(List<Long> shopIdList) {
+        return shopIdList.stream()
+                .map(id -> imageRepository.findFirstByByImageTarget(new ImageTarget(id, "shop")))
                 .toList();
-        return imagePathList;
     }
 }

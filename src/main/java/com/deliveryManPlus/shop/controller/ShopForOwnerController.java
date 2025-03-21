@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/owner/shop")
@@ -32,8 +35,9 @@ public class ShopForOwnerController {
     })
     @PostMapping
     public ResponseEntity<Void> create(@AuthenticationPrincipal UserDetailsImp userDetailsImp,
-                                       @Valid @RequestBody ShopCreateRequestDto dto) {
-        shopService.create(userDetailsImp.getBasicAuth().getUser(), dto);
+                                       @Valid @RequestPart("dto") ShopCreateRequestDto dto,
+                                       @RequestPart("imageList") List<MultipartFile> imageList) {
+        shopService.create(userDetailsImp.getBasicAuth().getUser(), dto, imageList);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

@@ -7,6 +7,8 @@ import com.deliveryManPlus.common.constant.Status;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.CategoryErrorCode;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
+import com.deliveryManPlus.image.model.entity.Image;
+import com.deliveryManPlus.image.model.vo.ImageTarget;
 import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.shop.constant.ShopStatus;
 import com.deliveryManPlus.shop.dto.*;
@@ -66,10 +68,17 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public Page<ShopResponseDto> findAll(ShopSearchOptionDto dto, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return shopRepository.findAllByDto(dto, pageable).map(ShopResponseDto::new);
+        Page<Shop> ShopPage = shopRepository.findAllByDto(dto, pageable);
+        List<Long> list = ShopPage.getContent()
+                .stream()
+                .map(Shop::getId).toList();
+        List<Image> imageList = imageService.findImageByShopList(list);
+
+        return ShopPage.map(shop -> new ShopResponseDto(shop, imageList));
 
 
     }
+
 
     @Override
     public ShopDetailResponseDto findById(Long shopId) {
@@ -88,7 +97,7 @@ public class ShopServiceImpl implements ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
         Category category = categoryRepository.findByIdOrElseThrows(dto.getCategoryId());
-        if(category.getStatus() == Status.DELETED){
+        if (category.getStatus() == Status.DELETED) {
             throw new ApiException(CategoryErrorCode.NOT_VALUABLE);
         }
 

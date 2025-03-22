@@ -1,6 +1,7 @@
 package com.deliveryManPlus.auth.filter;
 
 import com.deliveryManPlus.auth.constant.AuthenticationScheme;
+import com.deliveryManPlus.auth.constant.UrlConst;
 import com.deliveryManPlus.auth.utils.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,6 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j(topic = "Security::JwtAuthFilter")
 @Component
@@ -87,4 +89,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         return null;
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String requestURI = request.getRequestURI();
+
+        return Arrays.stream(UrlConst.WHITE_LIST)
+                .anyMatch(whiteList -> StringUtils.startsWithIgnoreCase(requestURI, whiteList));
+
+    }
+
 }

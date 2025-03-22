@@ -41,7 +41,7 @@ public class MenuOptionController {
 
     @Operation(summary = "메뉴 옵션 전체 삭제", description = "메뉴 옵션을 전체 삭제합니다."
             ,responses = {
-            @ApiResponse(responseCode = "200", description = "메뉴 옵션 전체 삭제 성공"),
+            @ApiResponse(responseCode = "204", description = "메뉴 옵션 전체 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "가게를 찾을 수 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     }, parameters = {

@@ -40,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
         Order order = orderRepository.findByIdOrElseThrow(orderId);
         User customer = getUser();
         if (!order.getCustomer().getId().equals(customer.getId())) {
-            throw new IllegalArgumentException("주문자만 리뷰를 작성할 수 있습니다.");
+            throw new ApiException(ReviewErrorCode.FORBIDDEN);
         }
 
         //review 검증

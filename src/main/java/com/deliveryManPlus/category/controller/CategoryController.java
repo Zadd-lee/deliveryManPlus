@@ -6,6 +6,7 @@ import com.deliveryManPlus.category.dto.CategorySearchRequestDto;
 import com.deliveryManPlus.category.dto.CategoryUpdateRequestDto;
 import com.deliveryManPlus.category.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,10 @@ public class CategoryController {
 
 
     @Operation(summary = "카테고리 조회", description = "카테고리를 검색 조건에 따라 조회합니다."
+            , parameters = {
+            @Parameter(name = "page", description = "페이지 번호", required = true),
+            @Parameter(name = "size", description = "페이지 사이즈", required = true)
+    }
             , responses = {
             @ApiResponse(responseCode = "200", description = "카테고리 조회 성공"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
@@ -43,14 +48,17 @@ public class CategoryController {
     public ResponseEntity<Page<CategoryResponseDto>> getCategoryList(@RequestBody CategorySearchRequestDto dto,
                                                                      @RequestParam(name = "page", defaultValue = "0") int page,
                                                                      @RequestParam(name = "size", defaultValue = "10") int size) {
-        return new ResponseEntity<>(categoryService.getCategoryList(dto,page,size), HttpStatus.OK);
+        return new ResponseEntity<>(categoryService.getCategoryList(dto, page, size), HttpStatus.OK);
     }
 
     @Operation(summary = "카테고리 수정", description = "카테고리를 수정합니다."
+            , parameters = {
+            @Parameter(name = "categoryId", description = "카테고리 ID", required = true)
+    }
             , responses = {
             @ApiResponse(responseCode = "200", description = "카테고리 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "404", description = "카테고리를 찾을 수 없음"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않은 카테고리입니다."),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PatchMapping("/admin/category/{categoryId}")
@@ -60,9 +68,12 @@ public class CategoryController {
     }
 
     @Operation(summary = "카테고리 삭제", description = "카테고리를 삭제합니다."
+            , parameters = {
+            @Parameter(name = "categoryId", description = "카테고리 ID", required = true)
+    }
             , responses = {
-            @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "카테고리를 찾을 수 없음"),
+            @ApiResponse(responseCode = "204", description = "카테고리 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않은 카테고리입니다."),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @DeleteMapping("/admin/category/{categoryId}")

@@ -57,7 +57,7 @@ public class OrderServiceImp implements OrderService {
     public void createOrder(Long couponId) {
         User user = getUser();
         Cart cart = cartRepository.findByCustomerIdDesc(user.getId())
-                .orElseThrow(() -> new ApiException(OrderErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new ApiException(OrderErrorCode.CART_EMPTY));
 
 
         //주문 생성

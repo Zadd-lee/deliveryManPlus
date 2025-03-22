@@ -60,8 +60,16 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Page<ReviewForCustomerResponseDto> getReviewForUserList(Pageable pageable) {
-        return reviewRepository.findByCustomer(getUser(), pageable)
-                .map(ReviewForCustomerResponseDto::new);
+        Page<Review> review = reviewRepository.findByCustomer(getUser(), pageable);
+        //이미지 가져오기
+        List<ImageTarget> imageTargetList = review.getContent()
+                .stream()
+                .map(r1 -> new ImageTarget(r1.getId(), this.getClass().getSimpleName()))
+                .toList();
+        List<Image> imageList = imageService.findImageByTargetList(imageTargetList);
+
+        return review
+                .map(r -> new ReviewForCustomerResponseDto(r, imageList));
     }
 
     @Override
@@ -85,7 +93,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewForCustomerResponseDto getReview(Long reviewId) {
-        return new ReviewForCustomerResponseDto(reviewRepository.findByIdOrElseThrow(reviewId));
+        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
+        //이미지 가져오기
+        ImageTarget imageTarget = new ImageTarget(review.getId(), this.getClass().getSimpleName());
+        List<Image> imageList = imageService.findImageByTarget(imageTarget);
+        return new ReviewForCustomerResponseDto(review,imageList);
     }
 
     @Transactional

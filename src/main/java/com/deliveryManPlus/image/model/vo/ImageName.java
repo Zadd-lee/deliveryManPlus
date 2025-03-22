@@ -1,5 +1,8 @@
 package com.deliveryManPlus.image.model.vo;
 
+import com.deliveryManPlus.common.constant.ImageExtension;
+import com.deliveryManPlus.common.exception.ApiException;
+import com.deliveryManPlus.common.exception.constant.errorcode.ImageErrorCode;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
@@ -17,6 +20,9 @@ public class ImageName {
         this.name = generateName();
         this.originalName = name;
         this.extension = name.substring(name.lastIndexOf(".")+1);
+        if (!ImageExtension.isSupported(this.extension)) {
+            throw new ApiException(ImageErrorCode.IMAGE_EXTENSION_NOT_SUPPORTED);
+        }
     }
 
     public ImageName() {

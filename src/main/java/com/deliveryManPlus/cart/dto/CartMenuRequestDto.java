@@ -3,6 +3,7 @@ package com.deliveryManPlus.cart.dto;
 import com.deliveryManPlus.cart.entity.Cart;
 import com.deliveryManPlus.cart.entity.CartMenu;
 import com.deliveryManPlus.menu.entity.Menu;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Schema(description = "장바구니 메뉴 요청 DTO")
 @NoArgsConstructor
 @Getter
 public class CartMenuRequestDto {
@@ -19,10 +21,11 @@ public class CartMenuRequestDto {
     @Valid
     List<CartMenuOptionRequestDto> cartMenuOptionDtoList;
 
+    @Schema(description = "수량", example = "1")
     //수량
     @Positive
     @NotNull
-    private int quantity;
+    public int quantity;
 
     public CartMenu toEntity(Menu menu, Cart cart) {
         return CartMenu.builder()
@@ -31,6 +34,7 @@ public class CartMenuRequestDto {
                 .quantity(this.quantity)
                 .build();
     }
+
 
     public List<Long> getAllCartMenuOptionDetailIdList() {
         return this.cartMenuOptionDtoList.stream()

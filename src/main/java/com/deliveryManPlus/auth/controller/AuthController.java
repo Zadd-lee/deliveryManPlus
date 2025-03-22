@@ -24,10 +24,11 @@ public class AuthController {
 
 
     @Operation(summary = "회원가입", description = "회원가입을 진행합니다."
-            , responses = {
+            ,responses = {
             @ApiResponse(responseCode = "201", description = "회원가입 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "409", description = "이미 존재하는 이메일"),
+            @ApiResponse(responseCode = "409", description = "이미 가입한 사용자입니다."),
+            @ApiResponse(responseCode = "410", description = "탈퇴한 사용자입니다."),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping("/signin")
@@ -40,7 +41,8 @@ public class AuthController {
             , responses = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "401", description = "인증 실패"),
+            @ApiResponse(responseCode = "403", description = "비밀번호 오류입니다"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping("/login")
@@ -54,7 +56,6 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "로그인 필요"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request){
 
@@ -63,6 +64,15 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Operation(summary = "탈퇴", description = "탈퇴를 진행합니다."
+            , responses = {
+            @ApiResponse(responseCode = "204", description = "탈퇴 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "로그인 필요"),
+            @ApiResponse(responseCode = "403", description = "비밀번호 오류입니다"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @DeleteMapping("/leave")
     public ResponseEntity<Void> leave(@Valid @RequestBody LeaveRequestDto leaveRequestDto) {
         authService.leave(leaveRequestDto);
@@ -73,8 +83,7 @@ public class AuthController {
             , responses = {
             @ApiResponse(responseCode = "200", description = "갱신 성공"),
             @ApiResponse(responseCode = "401", description = "토큰 만료"),
-            @ApiResponse(responseCode = "403", description = "인증 실패"),
-            @ApiResponse(responseCode = "404", description = "로그인 되지 않은 사용자"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없습니다"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @PostMapping("/refresh")

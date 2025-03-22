@@ -80,7 +80,7 @@ public class ShopForOwnerController {
     @Operation(summary = "상점 삭제", description = "상점을 삭제합니다."
             , tags = {"Shop"}
             ,responses = {
-            @ApiResponse(responseCode = "200", description = "삭제 성공"),
+            @ApiResponse(responseCode = "204", description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "상점 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     }, parameters = {

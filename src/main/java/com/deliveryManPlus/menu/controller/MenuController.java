@@ -97,7 +97,7 @@ public class MenuController {
     public ResponseEntity<Void> delete(@PathVariable(name = "shopId") Long shopId,
                                        @PathVariable(name = "menuId") Long menuId) {
         menuService.delete(shopId, menuId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

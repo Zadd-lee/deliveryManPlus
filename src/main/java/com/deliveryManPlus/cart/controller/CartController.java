@@ -53,6 +53,6 @@ public class CartController {
     @DeleteMapping("/user/cart")
     public ResponseEntity<Void> deleteCart() {
         cartService.deleteCart();
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

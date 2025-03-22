@@ -52,7 +52,7 @@ public class MenuOptionController {
     public ResponseEntity<String> deleteAllByMenuId(@PathVariable(name = "shopId") Long shopId
             , @PathVariable("menuId") Long menuId) {
         service.deleteById(shopId,menuId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

@@ -105,6 +105,10 @@ public class MenuServiceImp implements MenuService {
         validate(menu, shop);
         
         menu.updateStatus(MenuStatus.NOT_USE);
+
+        //이미지 삭제
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        imageService.deleteAll(imageTarget);
     }
 
     @Override

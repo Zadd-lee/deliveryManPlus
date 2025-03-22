@@ -90,7 +90,14 @@ public class ShopServiceImpl implements ShopService {
 
         validateShopStatus(shop);
 
-        return new ShopDetailResponseDto(shop, shop.getMenuList());
+        List<Image> imageList = imageService.findImageByTarget(new ImageTarget(shopId, this.getClass().getSimpleName()));
+
+        List<ImageTarget> menuTargetList = shop.getMenuList().stream()
+                .map(menu -> new ImageTarget(menu.getId(), "menu"))
+                .toList();
+        List<Image> menuImageList = imageService.findImageByTargetList(menuTargetList);
+
+        return new ShopDetailResponseDto(shop, shop.getMenuList(),imageList,menuImageList);
 
     }
 

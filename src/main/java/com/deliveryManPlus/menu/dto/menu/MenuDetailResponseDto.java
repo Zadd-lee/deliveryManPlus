@@ -1,5 +1,6 @@
 package com.deliveryManPlus.menu.dto.menu;
 
+import com.deliveryManPlus.image.model.entity.Image;
 import com.deliveryManPlus.menu.dto.menuOption.MenuOptionResponseDto;
 import com.deliveryManPlus.menu.entity.Menu;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,13 +26,18 @@ public class MenuDetailResponseDto {
     @Schema(description = "메뉴 옵션 목록")
     List<MenuOptionResponseDto> menuOptionResponseDtoList;
 
-    public MenuDetailResponseDto(Menu menu) {
+    List<String> imagePathList;
+
+    public MenuDetailResponseDto(Menu menu, List<Image> imageList) {
         this.id = menu.getId();
         this.name = menu.getName();
         this.context = menu.getContext();
         this.price = menu.getPrice();
         this.menuOptionResponseDtoList = menu.getMenuOptionList().stream()
                 .map(MenuOptionResponseDto::new)
+                .toList();
+        this.imagePathList = imageList.stream()
+                .map(Image::getPath)
                 .toList();
     }
 }

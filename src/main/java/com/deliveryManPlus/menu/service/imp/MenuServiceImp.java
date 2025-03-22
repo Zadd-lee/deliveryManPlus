@@ -3,6 +3,7 @@ package com.deliveryManPlus.menu.service.imp;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuStatus;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
+import com.deliveryManPlus.image.model.entity.Image;
 import com.deliveryManPlus.image.model.vo.ImageTarget;
 import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.menu.dto.menu.MenuCreateRequestDto;
@@ -117,7 +118,12 @@ public class MenuServiceImp implements MenuService {
         //검증
         validate(menu, shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND)));
-        return new MenuDetailResponseDto(menu);
+
+        //이미지 조회
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        List<Image> imageList = imageService.findImageByTarget(imageTarget);
+
+        return new MenuDetailResponseDto(menu,imageList);
     }
 
 }

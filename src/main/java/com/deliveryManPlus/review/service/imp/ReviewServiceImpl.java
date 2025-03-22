@@ -4,6 +4,7 @@ import com.deliveryManPlus.auth.constant.Role;
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.ReviewErrorCode;
+import com.deliveryManPlus.image.model.entity.Image;
 import com.deliveryManPlus.image.model.vo.ImageTarget;
 import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.order.entity.Order;
@@ -66,9 +67,19 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Page<ReviewForShopResponseDto> getReviewForShopList(Pageable pageable, Long shopId) {
 
-        return reviewRepository.findByShopId(shopId, pageable)
+        Page<Review> review = reviewRepository.findByShopId(shopId, pageable);
+
+
+        List<ImageTarget> imageTargetList = review.getContent()
+                .stream()
+                .map(r1 -> new ImageTarget(r1.getId(), this.getClass().getSimpleName()))
+                .toList();
+
+        List<Image> imageList = imageService.findImageByTargetList(imageTargetList);
+
+        return review
                 .map(r ->
-                        new ReviewForShopResponseDto(r, getReviewQuantity(r), getReviewAvg(r))
+                        new ReviewForShopResponseDto(r, getReviewQuantity(r), getReviewAvg(r),imageList)
                 );
     }
 

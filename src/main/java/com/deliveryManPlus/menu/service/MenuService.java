@@ -12,7 +12,7 @@ import java.util.List;
 public interface MenuService {
     void create(Long shopId, @Valid MenuCreateRequestDto dto, List<MultipartFile> imageList);
 
-    void update(Long shopId, Long menuId, @Valid MenuUpdateRequestDto dto);
+    void update(Long shopId, Long menuId, @Valid MenuUpdateRequestDto dto, List<MultipartFile> imageList);
 
     void updateStatus(Long shopId, Long menuId, MenuUpdateStatusRequestDto dto);
 

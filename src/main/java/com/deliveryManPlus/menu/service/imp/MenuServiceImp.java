@@ -60,7 +60,7 @@ public class MenuServiceImp implements MenuService {
     }
 
     @Override
-    public void update(Long shopId, Long menuId, @Valid MenuUpdateRequestDto dto) {
+    public void update(Long shopId, Long menuId, @Valid MenuUpdateRequestDto dto, List<MultipartFile> imageList) {
         //검증
         Shop shop = shopRepository.findById(menuId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -71,6 +71,11 @@ public class MenuServiceImp implements MenuService {
         validate(menu, shop);
 
         menu.updateByDto(dto);
+
+        //이미지 저장
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        imageService.updateImage(imageTarget,imageList);
+
 
     }
 

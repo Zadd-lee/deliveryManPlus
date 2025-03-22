@@ -66,7 +66,7 @@ public class AuthController {
     @DeleteMapping("/leave")
     public ResponseEntity<Void> leave(@Valid @RequestBody LeaveRequestDto leaveRequestDto) {
         authService.leave(leaveRequestDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Operation(summary = "토큰 갱신", description = "토큰을 갱신합니다."

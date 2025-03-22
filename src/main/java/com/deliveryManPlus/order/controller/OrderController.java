@@ -85,7 +85,7 @@ public class OrderController {
                                        @PathVariable(name = "orderId") Long orderId,
                                        @Valid @RequestBody OrderStatusRejectDto dto) {
         orderService.reject(shopId, orderId, dto.getRejectReason());
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

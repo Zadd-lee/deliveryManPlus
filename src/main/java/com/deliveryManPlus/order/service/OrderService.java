@@ -1,21 +1,20 @@
 package com.deliveryManPlus.order.service;
 
-import com.deliveryManPlus.order.model.dto.CreateOrderRequestDto;
-import com.deliveryManPlus.order.model.dto.OrderResponseDto;
-import com.deliveryManPlus.order.model.dto.OrderStatusRejectDto;
-import com.deliveryManPlus.order.model.dto.OrderStatusUpdateDto;
-import jakarta.validation.Valid;
-
-import java.util.List;
+import com.deliveryManPlus.common.exception.constant.errorcode.OrderStatus;
+import com.deliveryManPlus.order.dto.OrderDetailResponseDto;
+import com.deliveryManPlus.order.dto.OrderSimpleResponseDto;
+import org.springframework.data.domain.Page;
 
 public interface OrderService {
-    void createOrder(Long id, @Valid CreateOrderRequestDto menuList);
+    void createOrder(Long couponId);
 
-    List<OrderResponseDto> findOrderForUser(Long userId);
+    Page<OrderDetailResponseDto> findOrderForOwner(Long shopId, int page, int size);
 
-    List<OrderResponseDto> findOrderForOwner(Long userId, Long shopId);
+    void updateStatus(Long shopId, Long orderId, OrderStatus orderStatus);
 
-    OrderResponseDto updateStatus(Long id, Long shopId, Long orderId, @Valid OrderStatusUpdateDto dto);
+    void reject(Long shopId, Long orderId, String rejectReason);
 
-    void reject(Long userid, Long shopId, Long orderId, @Valid OrderStatusRejectDto dto);
+    Page<OrderSimpleResponseDto> findAllOrderForUser(int page, int size);
+
+    OrderDetailResponseDto findOrderForUser(Long orderId);
 }

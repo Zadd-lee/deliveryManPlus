@@ -16,9 +16,9 @@ public interface ShopService {
 
     ShopDetailResponseDto findById(Long shopId);
 
-    ShopDetailResponseDto updateShop(Long shopId, ShopUpdateRequestDto dto);
+    void updateShop(Long shopId, ShopUpdateRequestDto dto);
 
-    ShopDetailResponseDto updateShopStatus(Long shopId, @Valid ShopStatus status);
+    void updateShopStatus(Long shopId, @Valid ShopStatus status);
 
     void deleteShop(Long shopId);
 

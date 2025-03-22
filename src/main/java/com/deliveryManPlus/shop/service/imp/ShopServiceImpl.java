@@ -95,7 +95,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ShopDetailResponseDto updateShop(Long shopId, ShopUpdateRequestDto dto) {
+    public void updateShop(Long shopId, ShopUpdateRequestDto dto) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -108,12 +108,11 @@ public class ShopServiceImpl implements ShopService {
 
         shop.updateByDto(dto);
         shop.updateCategory(category);
-        return new ShopDetailResponseDto(shop, shop.getMenuList());
     }
 
 
     @Override
-    public ShopDetailResponseDto updateShopStatus(Long shopId, ShopStatus status) {
+    public void updateShopStatus(Long shopId, ShopStatus status) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -122,7 +121,6 @@ public class ShopServiceImpl implements ShopService {
         validateShopStatus(shop);
 
         shop.updateStatus(status);
-        return new ShopDetailResponseDto(shop, shop.getMenuList());
     }
 
     @Override

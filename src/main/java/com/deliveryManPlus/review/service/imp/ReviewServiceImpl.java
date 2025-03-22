@@ -113,6 +113,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         review.delete();
 
+        //이미지 삭제
+        ImageTarget imageTarget = new ImageTarget(review.getId(), this.getClass().getSimpleName());
+        imageService.deleteAll(imageTarget);
     }
 
     private static double getReviewAvg(Review r) {

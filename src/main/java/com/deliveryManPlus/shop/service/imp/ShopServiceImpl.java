@@ -68,13 +68,16 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public Page<ShopResponseDto> findAll(ShopSearchOptionDto dto, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Shop> ShopPage = shopRepository.findAllByDto(dto, pageable);
-        List<Long> list = ShopPage.getContent()
+        Page<Shop> shopPage = shopRepository.findAllByDto(dto, pageable);
+        List<Shop> content = shopPage.getContent();
+        List<ImageTarget> imageTargetList = content
                 .stream()
-                .map(Shop::getId).toList();
-        List<Image> imageList = imageService.findImageByShopList(list);
+                .map(Shop::getId)
+                .map(id -> new ImageTarget(id, this.getClass().getSimpleName()))
+                .toList();
+        List<Image> imageList = imageService.findImageByTargetList(imageTargetList);
 
-        return ShopPage.map(shop -> new ShopResponseDto(shop, imageList));
+        return shopPage.map(shop -> new ShopResponseDto(shop, imageList));
 
 
     }

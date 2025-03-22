@@ -12,7 +12,6 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -39,6 +38,7 @@ public class WebConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->
                         auth
+                                .requestMatchers(UrlConst.WHITE_LIST).permitAll()
                                 // static 리소스 경로
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 // 일부 dispatch 타입
@@ -60,13 +60,6 @@ public class WebConfig {
                 .addFilterAfter(jwtAuthFilter, ExceptionTranslationFilter.class);
 
         return http.build();
-    }
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> {
-            web.ignoring()
-                    .requestMatchers(UrlConst.WHITE_LIST); // 필터를 타면 안되는 경로
-        };
     }
 
     @Bean

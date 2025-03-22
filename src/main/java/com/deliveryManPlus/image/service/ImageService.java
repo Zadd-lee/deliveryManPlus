@@ -34,7 +34,7 @@ public class ImageService {
                 .map(multipartFile -> {
                     Image image = new Image(imageTarget, multipartFile);
                     try {
-                        String path = s3UploadService.saveFile(multipartFile, image.getImageName().getName());
+                        String path = s3UploadService.saveFile(multipartFile, image.getImageName().getFullName());
                         image.updatePath(path);
                     } catch (Exception e) {
                         e.printStackTrace();

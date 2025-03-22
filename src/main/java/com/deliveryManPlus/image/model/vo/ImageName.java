@@ -39,7 +39,7 @@ public class ImageName {
         return UUID.randomUUID().toString();
     }
 
-    public boolean isSameExtension(String extension) {
-        return this.extension.equals(extension);
+    public String getFullName() {
+        return name + "." + extension;
     }
 }

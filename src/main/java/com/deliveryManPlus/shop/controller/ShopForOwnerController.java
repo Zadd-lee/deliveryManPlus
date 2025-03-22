@@ -52,9 +52,10 @@ public class ShopForOwnerController {
     @PutMapping("/{shopId}")
     public ResponseEntity<Void> updateShop(@Parameter(name = "상점id"
             ,description = "상점 식별자",in = ParameterIn.PATH,required = true,example = "1") @PathVariable(name = "shopId") Long shopId,
-                                                            @Valid @RequestBody ShopUpdateRequestDto dto) {
+                                                            @RequestPart("imageList") List<MultipartFile> imageList,
+                                                            @Valid @RequestPart("dto") ShopUpdateRequestDto dto) {
 
-        shopService.updateShop(shopId, dto);
+        shopService.updateShop(shopId, dto,imageList);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

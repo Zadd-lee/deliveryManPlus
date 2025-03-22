@@ -95,7 +95,7 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public void updateShop(Long shopId, ShopUpdateRequestDto dto) {
+    public void updateShop(Long shopId, ShopUpdateRequestDto dto, List<MultipartFile> imageList) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -108,6 +108,11 @@ public class ShopServiceImpl implements ShopService {
 
         shop.updateByDto(dto);
         shop.updateCategory(category);
+
+        ImageTarget imageTarget = new ImageTarget(shop.getId(), this.getClass().getSimpleName());
+
+        //이미지 수정
+        imageService.updateImage(imageTarget,imageList);
     }
 
 

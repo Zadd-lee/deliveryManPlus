@@ -55,4 +55,17 @@ public class ImageService {
     public List<Image> findImageByTarget(ImageTarget imageTarget) {
         return imageRepository.findByImageTarget(imageTarget);
     }
+    @Transactional
+    public void updateImage(ImageTarget imageTarget, List<MultipartFile> imageList) {
+        //db에서 기존 이미지 삭제
+        List<Image> images = imageRepository.findByImageTarget(imageTarget);
+        imageRepository.deleteAll(images);
+
+        //s3 이미지 삭제
+        images.forEach(image -> s3UploadService.deleteImage(image.getImageName().getFullName()));
+
+        //새로운 이미지 저장
+        save(imageTarget, imageList);
+    }
+
 }

@@ -16,7 +16,7 @@ public interface ShopService {
 
     ShopDetailResponseDto findById(Long shopId);
 
-    void updateShop(Long shopId, ShopUpdateRequestDto dto);
+    void updateShop(Long shopId, ShopUpdateRequestDto dto, List<MultipartFile> imageList);
 
     void updateShopStatus(Long shopId, @Valid ShopStatus status);
 

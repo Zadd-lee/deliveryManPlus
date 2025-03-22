@@ -137,6 +137,10 @@ public class ShopServiceImpl implements ShopService {
         validateShopStatus(shop);
 
         shop.updateStatus(ShopStatus.CLOSED_DOWN);
+
+        //이미지 삭제
+        ImageTarget imageTarget = new ImageTarget(shopId, "shop");
+        imageService.deleteAll(imageTarget);
     }
 
     //shop의 status가 폐업이 아닌지 확인

@@ -14,4 +14,6 @@ public interface ImageRepository extends JpaRepository<Image,Long> {
     Image findFirstByImageTarget(ImageTarget imageTarget);
 
     List<Image> findByImageTarget(ImageTarget shop);
+
+    void deleteByImageTarget(ImageTarget imageTarget);
 }

@@ -57,15 +57,20 @@ public class ImageService {
     }
     @Transactional
     public void updateImage(ImageTarget imageTarget, List<MultipartFile> imageList) {
+        deleteAll(imageTarget);
+
+        //새로운 이미지 저장
+        save(imageTarget, imageList);
+    }
+
+    @Transactional
+    public void deleteAll(ImageTarget imageTarget) {
+
         //db에서 기존 이미지 삭제
         List<Image> images = imageRepository.findByImageTarget(imageTarget);
         imageRepository.deleteAll(images);
 
         //s3 이미지 삭제
         images.forEach(image -> s3UploadService.deleteImage(image.getImageName().getFullName()));
-
-        //새로운 이미지 저장
-        save(imageTarget, imageList);
     }
-
 }

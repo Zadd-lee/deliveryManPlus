@@ -4,6 +4,9 @@ import com.deliveryManPlus.auth.constant.Role;
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.ReviewErrorCode;
+import com.deliveryManPlus.image.model.entity.Image;
+import com.deliveryManPlus.image.model.vo.ImageTarget;
+import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.repository.OrderRepository;
 import com.deliveryManPlus.review.dto.ReviewCreateRequestDto;
@@ -17,6 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
 
@@ -25,10 +31,11 @@ import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final ImageService imageService;
 
     @Transactional
     @Override
-    public void createReview(Long orderId, ReviewCreateRequestDto dto) {
+    public void createReview(Long orderId, ReviewCreateRequestDto dto, List<MultipartFile> imageList) {
         //order 검증
         Order order = orderRepository.findByIdOrElseThrow(orderId);
         User customer = getUser();
@@ -45,26 +52,52 @@ public class ReviewServiceImpl implements ReviewService {
 
         reviewRepository.save(review);
 
+        //이미지 저장
+         ImageTarget imageTarget = new ImageTarget(review.getId(), this.getClass().getSimpleName());
+         imageService.save(imageTarget, imageList);
+
     }
 
     @Override
     public Page<ReviewForCustomerResponseDto> getReviewForUserList(Pageable pageable) {
-        return reviewRepository.findByCustomer(getUser(), pageable)
-                .map(ReviewForCustomerResponseDto::new);
+        Page<Review> review = reviewRepository.findByCustomer(getUser(), pageable);
+        //이미지 가져오기
+        List<ImageTarget> imageTargetList = review.getContent()
+                .stream()
+                .map(r1 -> new ImageTarget(r1.getId(), this.getClass().getSimpleName()))
+                .toList();
+        List<Image> imageList = imageService.findImageByTargetList(imageTargetList);
+
+        return review
+                .map(r -> new ReviewForCustomerResponseDto(r, imageList));
     }
 
     @Override
     public Page<ReviewForShopResponseDto> getReviewForShopList(Pageable pageable, Long shopId) {
 
-        return reviewRepository.findByShopId(shopId, pageable)
+        Page<Review> review = reviewRepository.findByShopId(shopId, pageable);
+
+
+        List<ImageTarget> imageTargetList = review.getContent()
+                .stream()
+                .map(r1 -> new ImageTarget(r1.getId(), this.getClass().getSimpleName()))
+                .toList();
+
+        List<Image> imageList = imageService.findImageByTargetList(imageTargetList);
+
+        return review
                 .map(r ->
-                        new ReviewForShopResponseDto(r, getReviewQuantity(r), getReviewAvg(r))
+                        new ReviewForShopResponseDto(r, getReviewQuantity(r), getReviewAvg(r),imageList)
                 );
     }
 
     @Override
     public ReviewForCustomerResponseDto getReview(Long reviewId) {
-        return new ReviewForCustomerResponseDto(reviewRepository.findByIdOrElseThrow(reviewId));
+        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
+        //이미지 가져오기
+        ImageTarget imageTarget = new ImageTarget(review.getId(), this.getClass().getSimpleName());
+        List<Image> imageList = imageService.findImageByTarget(imageTarget);
+        return new ReviewForCustomerResponseDto(review,imageList);
     }
 
     @Transactional
@@ -80,6 +113,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         review.delete();
 
+        //이미지 삭제
+        ImageTarget imageTarget = new ImageTarget(review.getId(), this.getClass().getSimpleName());
+        imageService.deleteAll(imageTarget);
     }
 
     private static double getReviewAvg(Review r) {

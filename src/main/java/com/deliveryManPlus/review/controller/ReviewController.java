@@ -12,6 +12,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -20,8 +23,10 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/user/order/{orderId}/review")
-    public ResponseEntity<Void> createReview(@PathVariable(name = "orderId") Long orderId, @Valid @RequestBody ReviewCreateRequestDto dto) {
-        reviewService.createReview(orderId, dto);
+    public ResponseEntity<Void> createReview(@PathVariable(name = "orderId") Long orderId,
+                                             @RequestPart("imageList") List<MultipartFile> imageList,
+                                             @Valid @RequestPart ReviewCreateRequestDto dto) {
+        reviewService.createReview(orderId, dto,imageList);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

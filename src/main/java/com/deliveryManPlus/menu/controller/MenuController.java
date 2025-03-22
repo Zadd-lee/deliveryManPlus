@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Tag(name = "Menu", description = "메뉴 API")
 @RestController
@@ -34,8 +37,9 @@ public class MenuController {
     })
     @PostMapping("/owner/{shopId}/menu")
     public ResponseEntity<Void> create(@PathVariable(name = "shopId") Long shopId,
-                                       @Valid @RequestBody MenuCreateRequestDto dto) {
-        menuService.create(shopId,dto);
+                                       @RequestPart("imageList") List<MultipartFile> imageList,
+                                       @Valid @RequestPart("dto") MenuCreateRequestDto dto) {
+        menuService.create(shopId,dto,imageList);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -53,8 +57,9 @@ public class MenuController {
     @PutMapping("/owner/{shopId}/menu/{menuId}")
     public ResponseEntity<Void> update(@PathVariable(name = "shopId") Long shopId,
                                        @PathVariable(name = "menuId") Long menuId,
-                                       @Valid @RequestBody MenuUpdateRequestDto dto) {
-        menuService.update(shopId, menuId, dto);
+                                       @RequestPart("imageList") List<MultipartFile> imageList,
+                                       @Valid @RequestPart("dto") MenuUpdateRequestDto dto) {
+        menuService.update(shopId, menuId, dto,imageList);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

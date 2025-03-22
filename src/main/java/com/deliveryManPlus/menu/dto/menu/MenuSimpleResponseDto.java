@@ -15,7 +15,9 @@ public class MenuSimpleResponseDto {
     private String context;
     private BigDecimal price;
 
-    public MenuSimpleResponseDto(Menu menu) {
+    private String imagePath;
+
+    public MenuSimpleResponseDto(Menu menu, String imagePath) {
         this.id = menu.getId();
         this.name = menu.getName();
         this.context = menu.getContext();

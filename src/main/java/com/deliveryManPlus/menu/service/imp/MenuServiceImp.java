@@ -3,6 +3,9 @@ package com.deliveryManPlus.menu.service.imp;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuStatus;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
+import com.deliveryManPlus.image.model.entity.Image;
+import com.deliveryManPlus.image.model.vo.ImageTarget;
+import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.menu.dto.menu.MenuCreateRequestDto;
 import com.deliveryManPlus.menu.dto.menu.MenuDetailResponseDto;
 import com.deliveryManPlus.menu.dto.menu.MenuUpdateRequestDto;
@@ -17,6 +20,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.deliveryManPlus.common.utils.EntityValidator.validate;
 
@@ -27,8 +33,10 @@ public class MenuServiceImp implements MenuService {
     private final MenuRepository menuRepository;
     private final ShopRepository shopRepository;
 
+    private final ImageService imageService;
+
     @Override
-    public void create(Long shopId, MenuCreateRequestDto dto) {
+    public void create(Long shopId, MenuCreateRequestDto dto, List<MultipartFile> imageList) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -45,10 +53,15 @@ public class MenuServiceImp implements MenuService {
 
         menuRepository.save(menu);
 
+        //이미지 저장
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        imageService.save(imageTarget,imageList);
+
+
     }
 
     @Override
-    public void update(Long shopId, Long menuId, @Valid MenuUpdateRequestDto dto) {
+    public void update(Long shopId, Long menuId, @Valid MenuUpdateRequestDto dto, List<MultipartFile> imageList) {
         //검증
         Shop shop = shopRepository.findById(menuId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -59,6 +72,11 @@ public class MenuServiceImp implements MenuService {
         validate(menu, shop);
 
         menu.updateByDto(dto);
+
+        //이미지 저장
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        imageService.updateImage(imageTarget,imageList);
+
 
     }
 
@@ -88,6 +106,10 @@ public class MenuServiceImp implements MenuService {
         validate(menu, shop);
         
         menu.updateStatus(MenuStatus.NOT_USE);
+
+        //이미지 삭제
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        imageService.deleteAll(imageTarget);
     }
 
     @Override
@@ -96,7 +118,12 @@ public class MenuServiceImp implements MenuService {
         //검증
         validate(menu, shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND)));
-        return new MenuDetailResponseDto(menu);
+
+        //이미지 조회
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        List<Image> imageList = imageService.findImageByTarget(imageTarget);
+
+        return new MenuDetailResponseDto(menu,imageList);
     }
 
 }

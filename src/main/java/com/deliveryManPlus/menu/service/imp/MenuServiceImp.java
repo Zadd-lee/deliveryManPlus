@@ -3,6 +3,8 @@ package com.deliveryManPlus.menu.service.imp;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.MenuStatus;
 import com.deliveryManPlus.common.exception.constant.errorcode.ShopErrorCode;
+import com.deliveryManPlus.image.model.vo.ImageTarget;
+import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.menu.dto.menu.MenuCreateRequestDto;
 import com.deliveryManPlus.menu.dto.menu.MenuDetailResponseDto;
 import com.deliveryManPlus.menu.dto.menu.MenuUpdateRequestDto;
@@ -17,6 +19,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.deliveryManPlus.common.utils.EntityValidator.validate;
 
@@ -27,8 +32,10 @@ public class MenuServiceImp implements MenuService {
     private final MenuRepository menuRepository;
     private final ShopRepository shopRepository;
 
+    private final ImageService imageService;
+
     @Override
-    public void create(Long shopId, MenuCreateRequestDto dto) {
+    public void create(Long shopId, MenuCreateRequestDto dto, List<MultipartFile> imageList) {
         //검증
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new ApiException(ShopErrorCode.NOT_FOUND));
@@ -44,6 +51,11 @@ public class MenuServiceImp implements MenuService {
         menu.updateShop(shop);
 
         menuRepository.save(menu);
+
+        //이미지 저장
+        ImageTarget imageTarget = new ImageTarget(menu.getId(), this.getClass().getSimpleName());
+        imageService.save(imageTarget,imageList);
+
 
     }
 

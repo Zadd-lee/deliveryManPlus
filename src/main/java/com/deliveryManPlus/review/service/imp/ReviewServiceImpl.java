@@ -4,6 +4,8 @@ import com.deliveryManPlus.auth.constant.Role;
 import com.deliveryManPlus.auth.entity.User;
 import com.deliveryManPlus.common.exception.ApiException;
 import com.deliveryManPlus.common.exception.constant.errorcode.ReviewErrorCode;
+import com.deliveryManPlus.image.model.vo.ImageTarget;
+import com.deliveryManPlus.image.service.ImageService;
 import com.deliveryManPlus.order.entity.Order;
 import com.deliveryManPlus.order.repository.OrderRepository;
 import com.deliveryManPlus.review.dto.ReviewCreateRequestDto;
@@ -17,6 +19,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
 
@@ -25,10 +30,11 @@ import static com.deliveryManPlus.common.utils.SecurityUtils.getUser;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final ImageService imageService;
 
     @Transactional
     @Override
-    public void createReview(Long orderId, ReviewCreateRequestDto dto) {
+    public void createReview(Long orderId, ReviewCreateRequestDto dto, List<MultipartFile> imageList) {
         //order 검증
         Order order = orderRepository.findByIdOrElseThrow(orderId);
         User customer = getUser();
@@ -44,6 +50,10 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = dto.toEntity(order, customer);
 
         reviewRepository.save(review);
+
+        //이미지 저장
+         ImageTarget imageTarget = new ImageTarget(review.getId(), this.getClass().getSimpleName());
+         imageService.save(imageTarget, imageList);
 
     }
 

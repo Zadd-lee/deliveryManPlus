@@ -1,7 +1,6 @@
 package com.deliveryManPlus.auth.filter;
 
 import com.deliveryManPlus.auth.constant.AuthenticationScheme;
-import com.deliveryManPlus.auth.constant.UrlConst;
 import com.deliveryManPlus.auth.utils.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +21,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+
+import static com.deliveryManPlus.auth.constant.UrlConst.WHITE_LIST;
 
 @Slf4j(topic = "Security::JwtAuthFilter")
 @Component
@@ -55,8 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
 
 
-        this.setAuthentication(request,userDetails);
-
+        this.setAuthentication(request, userDetails);
 
 
     }
@@ -74,6 +74,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     /**
      * 헤더에서 토큰을 추출한다.
+     *
      * @param request
      * @return {없을 경우 null 리턴}
      */
@@ -91,12 +92,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request)  {
         String requestURI = request.getRequestURI();
+        return Arrays.stream(WHITE_LIST).anyMatch(pattern -> matchesPattern(pattern, requestURI));
 
-        return Arrays.stream(UrlConst.WHITE_LIST)
-                .anyMatch(whiteList -> StringUtils.startsWithIgnoreCase(requestURI, whiteList));
+    }
 
+
+    private static boolean matchesPattern(String pattern, String path) {
+        if (pattern.equals("**")) return true;
+        if (pattern.endsWith("/**")) {
+            String prefix = pattern.substring(0, pattern.length() - 3);
+            return path.startsWith(prefix);
+        }
+        if (pattern.endsWith("/*")) {
+            String prefix = pattern.substring(0, pattern.length() - 2);
+            return path.startsWith(prefix) && path.indexOf('/', prefix.length() + 1) == -1;
+        }
+        return pattern.equals(path);
     }
 
 }
